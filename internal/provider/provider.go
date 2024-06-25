@@ -41,16 +41,21 @@ func (p *zendeskProvider) Metadata(ctx context.Context, req provider.MetadataReq
 // Schema defines the provider-level schema for configuration data.
 func (p *zendeskProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "The Zendesk provider allows you to interact with the Zendesk API.",
 		Attributes: map[string]schema.Attribute{
 			"host_url": schema.StringAttribute{
-				Optional: true,
+				Description: "The base URL of your Zendesk instance.",
+				Optional:    false,
 			},
 			"email": schema.StringAttribute{
-				Optional: true,
+				Description: "The email address of the user to authenticate with. It will be masked.",
+				Optional:    false,
+				Sensitive:   true,
 			},
 			"api_token": schema.StringAttribute{
-				Optional:  true,
-				Sensitive: true,
+				Description: "The API token to authenticate with.",
+				Optional:    false,
+				Sensitive:   true,
 			},
 		},
 	}
