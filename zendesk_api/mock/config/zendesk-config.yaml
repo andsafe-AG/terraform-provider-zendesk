@@ -1,0 +1,33 @@
+plugin: openapi
+specFile: zendesk-support-api.yaml
+resources:
+  - path: "/api/v2/custom_statuses"
+    method: POST
+    requestBody:
+      jsonPath: $.custom_status.agent_label
+      value: one
+    response:
+      file: agent_label_one_response.json
+      statusCode: 201
+  - path: "/api/v2/custom_statuses/{custom_status_id}"
+    method: GET
+    pathParams:
+      custom_status_id: 19682857720989
+    response:
+      file: agent_label_one_response.json
+      statusCode: 200
+  - path: "/api/v2/custom_statuses/{custom_status_id}"
+    method: PUT
+    requestBody:
+      jsonPath: $.custom_status.agent_label
+      value: two
+    response:
+      file: agent_label_two_response.json
+      statusCode: 200
+  - path: "/api/v2/custom_statuses/{custom_status_id}"
+    method: GET
+    pathParams:
+      custom_status_id: 19691825497501
+    response:
+      file: agent_label_two_response.json
+      statusCode: 200
