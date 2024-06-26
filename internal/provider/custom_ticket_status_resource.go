@@ -115,7 +115,7 @@ func (r *customStatusResource) Create(ctx context.Context, req resource.CreateRe
 
 	customStatusCreateResponse, err := r.client.GetClient().CreateCustomStatusWithResponse(ctx, requestPayload)
 	if err != nil {
-		errorMessage := fmt.Sprintf("API error creating custom status: ")
+		errorMessage := "API error creating custom status: "
 		if customStatusCreateResponse != nil {
 			if customStatusCreateResponse.HTTPResponse != nil {
 				errorMessage += customStatusCreateResponse.HTTPResponse.Status
@@ -354,7 +354,7 @@ func (r *customStatusResource) Update(ctx context.Context, req resource.UpdateRe
 	customStatusUpdateResponse, err := r.client.GetClient().UpdateCustomStatusWithResponse(ctx, statusId, updateRequestBody)
 
 	if err != nil {
-		errorMessage := fmt.Sprintf("API error updating custom status: ")
+		errorMessage := "API error updating custom status: "
 		if customStatusUpdateResponse != nil {
 			if customStatusUpdateResponse.HTTPResponse != nil {
 				errorMessage += customStatusUpdateResponse.HTTPResponse.Status
