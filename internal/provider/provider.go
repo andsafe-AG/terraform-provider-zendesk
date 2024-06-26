@@ -46,15 +46,18 @@ func (p *zendeskProvider) Schema(ctx context.Context, req provider.SchemaRequest
 			"host_url": schema.StringAttribute{
 				Description: "The base URL of your Zendesk instance.",
 				Optional:    false,
+				Required:    true,
 			},
 			"email": schema.StringAttribute{
 				Description: "The email address of the user to authenticate with. It will be masked.",
 				Optional:    false,
+				Required:    true,
 				Sensitive:   true,
 			},
 			"api_token": schema.StringAttribute{
 				Description: "The API token to authenticate with.",
 				Optional:    false,
+				Required:    true,
 				Sensitive:   true,
 			},
 		},
