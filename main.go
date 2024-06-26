@@ -38,8 +38,8 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		// Published name of your provider:
-		Address: "andsafe-AG/zendesk",
+		// Published name of your provider. Must be in the form of registry.terraform.io/<namespace>/<type>
+		Address: "registry.terraform.io/andsafe-AG/zendesk",
 		Debug:   debug,
 	}
 
