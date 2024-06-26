@@ -3,6 +3,8 @@
 issues:
   max-per-linter: 0
   max-same-issues: 0
+  exclude-files:
+    - zendesk_api/zendesk_client.gen.go
 
 linters:
   disable-all: true
