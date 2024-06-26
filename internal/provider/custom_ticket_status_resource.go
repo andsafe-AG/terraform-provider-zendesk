@@ -188,8 +188,12 @@ func mapPlanToCustomStatusCreateRequestPayload(customStatusModel resource_custom
 	if err != nil {
 		return zendesk_api.CustomStatusCreateRequest{}, err
 	}
+	active := true
+	if !customStatusModel.CustomStatus.Active.IsUnknown() {
+		active = customStatusModel.CustomStatus.Active.ValueBool()
+	}
 	input := zendesk_api.CustomStatusCreateInput{
-		Active:             customStatusModel.CustomStatus.Active.ValueBoolPointer(),
+		Active:             &active,
 		AgentLabel:         customStatusModel.CustomStatus.AgentLabel.ValueStringPointer(),
 		StatusCategory:     &category,
 		Description:        customStatusModel.CustomStatus.Description.ValueStringPointer(),
@@ -344,12 +348,7 @@ func (r *customStatusResource) Update(ctx context.Context, req resource.UpdateRe
 
 	// Map plan to API request payload
 
-	updateRequestBody, err := mapPlanToCustomStatusUpdateRequestPayload(plan)
-	if err != nil {
-		tflog.Error(ctx, "Error mapping plan to API request payload: ", map[string]any{"error": err.Error()})
-		resp.Diagnostics.AddError("error mapping plan to API request payload", err.Error())
-		return
-	}
+	updateRequestBody := mapPlanToCustomStatusUpdateRequestPayload(plan)
 
 	// Update Custom Status call logic
 	customStatusUpdateResponse, err := r.client.GetClient().UpdateCustomStatusWithResponse(ctx, statusId, updateRequestBody)
@@ -399,9 +398,13 @@ func (r *customStatusResource) Update(ctx context.Context, req resource.UpdateRe
 	tflog.Debug(ctx, "Update custom status completed successfully.")
 }
 
-func mapPlanToCustomStatusUpdateRequestPayload(plan resource_custom_status.CustomStatusModel) (zendesk_api.CustomStatusUpdateRequest, error) {
+func mapPlanToCustomStatusUpdateRequestPayload(plan resource_custom_status.CustomStatusModel) zendesk_api.CustomStatusUpdateRequest {
+	active := true
+	if !plan.CustomStatus.Active.IsUnknown() {
+		active = plan.CustomStatus.Active.ValueBool()
+	}
 	input := zendesk_api.CustomStatusUpdateInput{
-		Active:             plan.CustomStatus.Active.ValueBoolPointer(),
+		Active:             &active,
 		AgentLabel:         plan.CustomStatus.AgentLabel.ValueStringPointer(),
 		Description:        plan.CustomStatus.Description.ValueStringPointer(),
 		EndUserDescription: plan.CustomStatus.EndUserDescription.ValueStringPointer(),
@@ -410,7 +413,7 @@ func mapPlanToCustomStatusUpdateRequestPayload(plan resource_custom_status.Custo
 	payload := zendesk_api.CustomStatusUpdateRequest{
 		CustomStatus: &input,
 	}
-	return payload, nil
+	return payload
 
 }
 
