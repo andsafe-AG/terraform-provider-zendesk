@@ -2,6 +2,8 @@
 # For details see https://developer.zendesk.com/api-reference/ticketing/tickets/custom_ticket_statuses/
 # Following example creates a custom status with the category "open" and the agent label "In Progress".
 # The example uses all possible attributes of the custom status resource.
+# !! Warning: A custom status cannot be deleted once it has been created. It can only be deactivated.
+# Deletion of the Resource will not delete the custom status in Zendesk.
 resource "zendesk_custom_status" "example_status" {
   # Choose one of the categories: new, open, pending, hold, or solved
   status_category = "open"
