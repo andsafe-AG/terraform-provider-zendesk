@@ -4,11 +4,11 @@
 package main
 
 import (
-	"context"
 	"flag"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6/tf6server"
 	"log"
-
-	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"terraform-provider-zendesk/internal/combined_provider"
 	"terraform-provider-zendesk/internal/provider"
 )
 
@@ -33,19 +33,30 @@ var (
 
 func main() {
 	var debug bool
+	var err error
 
 	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
-	opts := providerserver.ServeOpts{
-		// Published name of your provider. Must be in the form of registry.terraform.io/<namespace>/<type>
-		Address: "registry.terraform.io/andsafe-AG/zendesk",
-		Debug:   debug,
+	var serveOpts []tf6server.ServeOpt
+
+	if debug {
+		serveOpts = append(serveOpts, tf6server.WithManagedDebug())
 	}
 
-	err := providerserver.Serve(context.Background(), provider.New(version), opts)
+	err = tf6server.Serve(
+		"registry.terraform.io/andsafe-AG/zendesk",
+		func() tfprotov6.ProviderServer {
+			muxServer, err2 := combined_provider.BuildMuxProviderServer(provider.New(version)())
+			if err2 != nil {
+				log.Fatal(err2)
+			}
+			return *muxServer
+		},
+		serveOpts...,
+	)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err)
 	}
 }
