@@ -5,6 +5,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -12,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"strings"
 	"terraform-provider-zendesk/zendesk_api"
 )
 
@@ -28,9 +30,9 @@ type zendeskProvider struct {
 
 // zendeskProviderModel maps provider schema data to a Go type.
 type zendeskProviderModel struct {
-	HostUrl  types.String `tfsdk:"host_url"`
-	Email    types.String `tfsdk:"email"`
-	ApiToken types.String `tfsdk:"api_token"`
+	Account types.String `tfsdk:"account"`
+	Email   types.String `tfsdk:"email"`
+	Token   types.String `tfsdk:"token"`
 }
 
 func (p *zendeskProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -41,23 +43,19 @@ func (p *zendeskProvider) Metadata(ctx context.Context, req provider.MetadataReq
 // Schema defines the provider-level schema for configuration data.
 func (p *zendeskProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "The Zendesk provider allows you to interact with the Zendesk API.",
+		Description: "",
 		Attributes: map[string]schema.Attribute{
-			"host_url": schema.StringAttribute{
-				Description: "The base URL of your Zendesk instance.",
-				Optional:    false,
-				Required:    true,
+			"account": schema.StringAttribute{
+				Description: "Account name of your Zendesk instance.",
+				Optional:    true,
 			},
 			"email": schema.StringAttribute{
-				Description: "The email address of the user to authenticate with. It will be masked.",
-				Optional:    false,
-				Required:    true,
-				Sensitive:   true,
+				Description: "Email address of agent user who have permission to access the API.",
+				Optional:    true,
 			},
-			"api_token": schema.StringAttribute{
-				Description: "The API token to authenticate with.",
-				Optional:    false,
-				Required:    true,
+			"token": schema.StringAttribute{
+				Description: "[API token](https://developer.zendesk.com/rest_api/docs/support/introduction#api-token) for your Zendesk instance.",
+				Optional:    true,
 				Sensitive:   true,
 			},
 		},
@@ -78,14 +76,14 @@ func (p *zendeskProvider) Configure(ctx context.Context, req provider.ConfigureR
 	// If practitioner provided a configuration value for any of the
 	// attributes, it must be a known value.
 
-	if config.HostUrl.IsUnknown() {
-		errorSummary := "Unknown Zendesk API HostUrl"
+	if config.Account.IsUnknown() {
+		errorSummary := "Unknown Zendesk API Account"
 		tflog.Error(ctx, errorSummary)
 		resp.Diagnostics.AddAttributeError(
-			path.Root("host_url"),
+			path.Root("account"),
 			errorSummary,
-			"The provider cannot create the Zendesk API client as there is an unknown configuration value for the Zendesk API host_url URL. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the ZENDESK_HOST_URL environment variable.",
+			"The provider cannot create the Zendesk API client as there is an unknown configuration value for the Zendesk API account URL. "+
+				"Either target apply the source of the value first, set the value statically in the configuration, or use the ZENDESK_ACCOUNT environment variable.",
 		)
 	}
 
@@ -100,14 +98,14 @@ func (p *zendeskProvider) Configure(ctx context.Context, req provider.ConfigureR
 		)
 	}
 
-	if config.ApiToken.IsUnknown() {
-		errorSummary := "Unknown Zendesk API ApiToken"
+	if config.Token.IsUnknown() {
+		errorSummary := "Unknown Zendesk API Token"
 		tflog.Error(ctx, errorSummary)
 		resp.Diagnostics.AddAttributeError(
-			path.Root("api_token"),
+			path.Root("token"),
 			errorSummary,
-			"The provider cannot create the Zendesk API client as there is an unknown configuration value for the Zendesk API ApiToken. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the ZENDESK_API_TOKEN environment variable.",
+			"The provider cannot create the Zendesk API client as there is an unknown configuration value for the Zendesk API Token. "+
+				"Either target apply the source of the value first, set the value statically in the configuration, or use the ZENDESK_TOKEN environment variable.",
 		)
 	}
 
@@ -117,9 +115,20 @@ func (p *zendeskProvider) Configure(ctx context.Context, req provider.ConfigureR
 
 	var hostUrl, email, apiToken string
 
-	if !config.HostUrl.IsNull() {
-		hostUrl = config.HostUrl.ValueString()
-		tflog.Debug(ctx, "Used host_url from configuration")
+	if !config.Account.IsNull() {
+		baseURLFormat := "https://%s.zendesk.com"
+		if strings.Contains(config.Account.ValueString(), "localhost") {
+			hostUrl = "http://localhost:"
+			if strings.Contains(config.Account.ValueString(), "Port") {
+				hostUrl += strings.Replace(config.Account.ValueString(), "localhostPort", "", 1)
+			} else {
+				hostUrl += "8080"
+			}
+		} else {
+			hostUrl = fmt.Sprintf(baseURLFormat, config.Account.ValueString())
+		}
+
+		tflog.Debug(ctx, "Used account from configuration")
 	}
 
 	if !config.Email.IsNull() {
@@ -127,21 +136,21 @@ func (p *zendeskProvider) Configure(ctx context.Context, req provider.ConfigureR
 		tflog.Debug(ctx, "Used email from configuration")
 	}
 
-	if !config.ApiToken.IsNull() {
-		apiToken = config.ApiToken.ValueString()
-		tflog.Debug(ctx, "Used api_token from configuration")
+	if !config.Token.IsNull() {
+		apiToken = config.Token.ValueString()
+		tflog.Debug(ctx, "Used token from configuration")
 	}
 
 	// If any of the expected configurations are missing, return
 	// errors with provider-specific guidance.
 
 	if hostUrl == "" {
-		tflog.Error(ctx, "Missing Zendesk API HostUrl")
+		tflog.Error(ctx, "Missing Zendesk API Account")
 		resp.Diagnostics.AddAttributeError(
-			path.Root("host_url"),
-			"Missing Zendesk API HostUrl",
-			"The provider cannot create the Zendesk API client as there is a missing or empty value for the Zendesk API host_url. "+
-				"Set the host_url value in the configuration or use the ZENDESK_HOST_URL environment variable. "+
+			path.Root("account"),
+			"Missing Zendesk API Account",
+			"The provider cannot create the Zendesk API client as there is a missing or empty value for the Zendesk API account. "+
+				"Set the account value in the configuration or use the ZENDESK_ACCOUNT environment variable. "+
 				"If either is already set, ensure the value is not empty.",
 		)
 	}
@@ -158,12 +167,12 @@ func (p *zendeskProvider) Configure(ctx context.Context, req provider.ConfigureR
 	}
 
 	if apiToken == "" {
-		tflog.Error(ctx, "Missing Zendesk API ApiToken")
+		tflog.Error(ctx, "Missing Zendesk API Token")
 		resp.Diagnostics.AddAttributeError(
-			path.Root("api_token"),
-			"Missing Zendesk API ApiToken",
-			"The provider cannot create the Zendesk API client as there is a missing or empty value for the Zendesk API api_token. "+
-				"Set the api_token value in the configuration or use the ZENDESK_API_TOKEN environment variable. "+
+			path.Root("token"),
+			"Missing Zendesk API Token",
+			"The provider cannot create the Zendesk API client as there is a missing or empty value for the Zendesk API token. "+
+				"Set the token value in the configuration or use the ZENDESK_TOKEN environment variable. "+
 				"If either is already set, ensure the value is not empty.",
 		)
 	}

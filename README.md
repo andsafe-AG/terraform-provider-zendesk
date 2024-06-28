@@ -4,6 +4,9 @@
 
 # Zendesk Terraform Provider by andsafe-AG
 
+This Terraform Provider is developed on terraform Plugin Framework and integrates existing Zendesk Terraform provider with [Terraform Provider Zendesk by Nukosuke ](https://registry.terraform.io/providers/nukosuke/zendesk/latest/docs)
+
+28.06.2024 - Combined existing provider with [Terraform Provider Zendesk by Nukosuke (GitHub)](https://github.com/nukosuke/terraform-provider-zendesk)
 27.06.2024 - Custom Ticket Status Support
 
 
@@ -15,7 +18,7 @@
 
 ## Using the provider
 
-Configure the provider by setting the `subdomain`, `email` and `api_token` attributes.
+Configure the provider by setting the `subdomain`, `email` and `token` attributes.
 
 ```hcl
 terraform {
