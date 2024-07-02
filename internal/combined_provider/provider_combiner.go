@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 	"github.com/nukosuke/terraform-provider-zendesk/zendesk"
 	"log"
-	//"terraform-provider-zendesk/internal/provider"
 )
 
 func BuildMuxProviderServer(pluginFrameworkProvider provider.Provider) (*tfprotov6.ProviderServer, error) {
 	ctx := context.Background()
 
+	// upgrade the zendesk provider to the Terraform Plugin Framework (version 6.0)
 	upgradedNukosukeZendeskProvider, err2 := tf5to6server.UpgradeServer(
 		ctx,
 		zendesk.Provider().GRPCProvider,
@@ -26,12 +26,15 @@ func BuildMuxProviderServer(pluginFrameworkProvider provider.Provider) (*tfproto
 	}
 
 	providers := []func() tfprotov6.ProviderServer{
-		providerserver.NewProtocol6(pluginFrameworkProvider), // Example terraform-plugin-framework provider
+		// andsafe Zendesk provider, developed in the Terraform Plugin Framework (version 6.0)
+		providerserver.NewProtocol6(pluginFrameworkProvider),
+		// upgraded provider
 		func() tfprotov6.ProviderServer {
 			return upgradedNukosukeZendeskProvider
 		},
 	}
 
+	// Mix the two providers
 	muxServer, err := tf6muxserver.NewMuxServer(ctx, providers...)
 	if err != nil {
 		return nil, err
