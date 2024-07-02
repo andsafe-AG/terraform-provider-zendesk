@@ -5,16 +5,19 @@
 # !! Warning: A custom status cannot be deleted once it has been created. It can only be deactivated.
 # Deletion of the Resource will not delete the custom status in Zendesk.
 resource "zendesk_custom_status" "example_status" {
-  # Choose one of the categories: new, open, pending, hold, or solved
-  status_category = "open"
-  # Label that will be displayed to agents in the UI. Must be unique.
-  agent_label = "In Progress"
-  # Label that will be displayed to end users in the UI
-  end_user_label = "We are on it!"
-  # Description of the status for agents
-  description = "This is an example progress status"
-  # Description of the status for end users
-  end_user_description = "Your request is being processed."
-  # Whether the status is active or not. Not active would mean that the status is not available for selection in the UI
-  active = true
+  custom_status = {
+    # Choose one of the categories: new, open, pending, hold, or solved
+    status_category = "open"
+    # Label that will be displayed to agents in the UI. Must be unique.
+    agent_label = "In Progress"
+    # Label that will be displayed to end users in the UI
+    end_user_label = "We are on it!"
+    # Description of the status for agents
+    description = "This is an example progress status"
+    # Description of the status for end users
+    end_user_description = "Your request is being processed."
+    # Whether the status is active or not. Not active would mean that the status is not available for selection in the UI
+    active = true
+  }
+
 }
