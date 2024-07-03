@@ -56,14 +56,16 @@ func TestAccCustomStatusResource(t *testing.T) {
 			},
 			// ImportState testing
 			{
+				Config:                               providerConfig + testAccCustomStatusResourceConfig("two"),
 				ResourceName:                         "zendesk_custom_status.test",
 				ImportState:                          true,
+				ImportStateId:                        "two",
 				ImportStateVerifyIdentifierAttribute: "custom_status_id",
-				// This is not normally necessary, but is here because this
-				// example code does not have an actual upstream service.
-				// Once the Read method is able to refresh information from
-				// the upstream service, this can be removed.
-				ImportStateVerifyIgnore: []string{"agent_label"},
+				ImportStateVerifyIgnore:              []string{"agent_label"},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(
+						"zendesk_custom_status.test", "custom_status.agent_label", "two"),
+				),
 			},
 			// Update and Read testing
 			{

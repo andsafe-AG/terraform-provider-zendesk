@@ -33,18 +33,49 @@ type customStatusResource struct {
 	client *zendesk_api.SupportApi
 }
 
+// ImportState imports a Custom Status by a given id, when the id value is an integer, or by label=id otherwise /*
 func (r *customStatusResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
 	// Retrieve import ID and save to id attribute
 	tflog.Debug(ctx, "Called ImportState custom status")
-	tflog.Debug(ctx, "request.id: "+request.ID)
+	id := request.ID
+	tflog.Debug(ctx, "request.id: "+id)
+
+	idInt, intParsingError := strconv.ParseInt(id, 10, 64)
+	if intParsingError != nil {
+		tflog.Debug(ctx, "custom status id could not be parsed as a number: "+intParsingError.Error())
+		tflog.Info(ctx, "Will try to find a custom status by the label: "+id)
+		customStatusesResponse, errors := r.client.GetClient().ListCustomStatusesWithResponse(ctx, nil, jsonContenttypeHeaderEditor)
+		if errors != nil {
+			tflog.Error(ctx, "Error listing custom statuses: ", map[string]any{"error": errors.Error()})
+			response.Diagnostics.AddError("Error listing custom statuses", errors.Error())
+			return
+		}
+		if customStatusesResponse.HTTPResponse.StatusCode != 200 {
+			msg := "API error listing custom statuses: " + customStatusesResponse.HTTPResponse.Status
+			tflog.Error(ctx, msg)
+			response.Diagnostics.AddError(msg, "List custom statuses failed with status code: "+customStatusesResponse.HTTPResponse.Status)
+			return
+		}
+		customStatuses := customStatusesResponse.JSON200.CustomStatuses
+		tflog.Debug(ctx, "Found custom statuses: "+fmt.Sprintf("%v", customStatuses))
+		for _, customStatus := range *customStatuses {
+			if customStatus.AgentLabel == id {
+				idInt = int64(*customStatus.Id)
+				break
+			}
+
+		}
+	}
+	if idInt == 0 {
+		tflog.Error(ctx, "Could not find custom status with id or label: "+id)
+		response.Diagnostics.AddError("Could not find custom status with id or label: "+id, "")
+		return
+	}
+
 	customStatusIdPath1 := path.Root("custom_status_id")
 	customStatusIdPath2 := path.Root("custom_status").AtName("id")
-
 	tflog.Debug(ctx, "ImportState custom status with customStatusIdPath1: "+customStatusIdPath1.String())
 	tflog.Debug(ctx, "ImportState custom status with customStatusIdPath2: "+customStatusIdPath2.String())
-
-	idInt, _ := strconv.ParseInt(request.ID, 10, 64)
-
 	response.Diagnostics.Append(response.State.SetAttribute(ctx, customStatusIdPath1, idInt)...)
 	response.Diagnostics.Append(response.State.SetAttribute(ctx, customStatusIdPath2, idInt)...)
 

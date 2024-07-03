@@ -1,0 +1,36 @@
+{
+  "custom_statuses": [
+    {
+      "active": true,
+      "id": 19682857720989,
+      "agent_label": "one",
+      "description": "test descr",
+      "end_user_description": "test end user descr",
+      "end_user_label": "one",
+      "status_category": "open",
+      "created_at": "2021-06-02T14:00:00Z",
+      "updated_at": "2021-06-02T14:00:00Z",
+      "default": false,
+      "raw_agent_label": "one",
+      "raw_end_user_label": "test end user label",
+      "raw_description": "test descr",
+      "raw_end_user_description": "test end user descr"
+    },
+    {
+      "active": true,
+      "id": 19691825497501,
+      "agent_label": "two",
+      "description": "test descr 2",
+      "end_user_description": "test end user descr 2",
+      "end_user_label": "two",
+      "status_category": "open",
+      "created_at": "2021-06-02T14:00:00Z",
+      "updated_at": "2021-06-02T14:00:00Z",
+      "default": false,
+      "raw_agent_label": "two",
+      "raw_end_user_label": "test end user label 2",
+      "raw_description": "test descr 2",
+      "raw_end_user_description": "test end user descr 2"
+    }
+  ]
+}
