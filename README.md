@@ -25,9 +25,15 @@ terraform {
   required_providers {
     zendesk = {
       source  = "andsafe-AG/zendesk"
-      version = ">= 0.0.1"
+      version = ">= 1.0.0"
     }
   }
+}
+
+provider "zendesk" {
+  account = "my-zendesk-subdomain"
+  email   = "zendesk-user@email.com"
+  token   = "my-api-token"
 }
 ```
 
