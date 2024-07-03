@@ -8,13 +8,13 @@ resource "zendesk_custom_status" "example_status" {
   custom_status = {
     # Choose one of the categories: new, open, pending, hold, or solved
     status_category = "open"
-    # Label that will be displayed to agents in the UI. Must be unique.
+    # Label that will be displayed to agents in the UI. Must be unique, max. 48 characters
     agent_label = "In Progress"
-    # Label that will be displayed to end users in the UI
+    # Label that will be displayed to end users in the UI, max. 48 characters
     end_user_label = "We are on it!"
-    # Description of the status for agents, max. 48 characters
+    # Description of the status for agents
     description = "This is an example progress status"
-    # Description of the status for end users, max.48 characters
+    # Description of the status for end users
     end_user_description = "Your request is being processed."
     # Whether the status is active or not. Not active would mean that the status is not available for selection in the UI
     active = true
