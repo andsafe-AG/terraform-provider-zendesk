@@ -1,0 +1,1 @@
+tfplugingen-openapi generate --config gen-config-custom-status.yml --output output/webhook_provider_code_spec.json zendesk-support-api-openapi.yaml

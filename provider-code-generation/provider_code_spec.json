@@ -1,0 +1,262 @@
+{
+	"datasources": [
+		{
+			"name": "custom_status",
+			"schema": {
+				"attributes": [
+					{
+						"name": "custom_status_id",
+						"int64": {
+							"computed_optional_required": "required",
+							"description": "The id of the custom status"
+						}
+					},
+					{
+						"name": "custom_status",
+						"single_nested": {
+							"computed_optional_required": "computed",
+							"attributes": [
+								{
+									"name": "active",
+									"bool": {
+										"computed_optional_required": "computed",
+										"description": "If true, the custom status is set to active, If false, the custom status is set to inactive"
+									}
+								},
+								{
+									"name": "agent_label",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The label displayed to agents. Maximum length is 48 characters"
+									}
+								},
+								{
+									"name": "created_at",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The date and time the custom ticket status was created"
+									}
+								},
+								{
+									"name": "default",
+									"bool": {
+										"computed_optional_required": "computed",
+										"description": "If true, the custom status is set to default. If false, the custom status is set to non-default"
+									}
+								},
+								{
+									"name": "description",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The description of when the user should select this custom ticket status"
+									}
+								},
+								{
+									"name": "end_user_description",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The description displayed to end users"
+									}
+								},
+								{
+									"name": "end_user_label",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The label displayed to end users. Maximum length is 48 characters"
+									}
+								},
+								{
+									"name": "id",
+									"int64": {
+										"computed_optional_required": "computed",
+										"description": "Automatically assigned when the custom ticket status is created"
+									}
+								},
+								{
+									"name": "raw_agent_label",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The dynamic content placeholder. If the dynamic content placeholder is not available, this is the \"agent_label\" value. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "raw_description",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The dynamic content placeholder. If the dynamic content placeholder is not available, this is the \"description\" value. [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "raw_end_user_description",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The dynamic content placeholder. If the dynamic content placeholder is not available, this is the \"end_user_description\" value. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "raw_end_user_label",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The dynamic content placeholder. If the dynamic content placeholder is not available, this is the \"end_user_label\" value. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "status_category",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The status category the custom ticket status belongs to"
+									}
+								},
+								{
+									"name": "updated_at",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The date and time the custom ticket status was last updated"
+									}
+								}
+							]
+						}
+					}
+				]
+			}
+		}
+	],
+	"provider": {
+		"name": "zendesk"
+	},
+	"resources": [
+		{
+			"name": "custom_status",
+			"schema": {
+				"attributes": [
+					{
+						"name": "custom_status",
+						"single_nested": {
+							"computed_optional_required": "computed_optional",
+							"attributes": [
+								{
+									"name": "active",
+									"bool": {
+										"computed_optional_required": "computed_optional",
+										"description": "True if the custom status is set as active; inactive if false"
+									}
+								},
+								{
+									"name": "agent_label",
+									"string": {
+										"computed_optional_required": "computed_optional",
+										"description": "The dynamic content placeholder, if present, or the \"agent_label\" value, if not. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "description",
+									"string": {
+										"computed_optional_required": "computed_optional",
+										"description": "The dynamic content placeholder, if present, or the \"description\" value, if not. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "end_user_description",
+									"string": {
+										"computed_optional_required": "computed_optional",
+										"description": "The dynamic content placeholder, if present, or the \"end_user_description\" value, if not. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "end_user_label",
+									"string": {
+										"computed_optional_required": "computed_optional",
+										"description": "The dynamic content placeholder, if present, or the \"end_user_label\" value, if not. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "status_category",
+									"string": {
+										"computed_optional_required": "computed_optional",
+										"description": "The status category the custom ticket status belongs to",
+										"validators": [
+											{
+												"custom": {
+													"imports": [
+														{
+															"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+														}
+													],
+													"schema_definition": "stringvalidator.OneOf(\n\"new\",\n\"open\",\n\"pending\",\n\"hold\",\n\"solved\",\n)"
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "created_at",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The date and time the custom ticket status was created"
+									}
+								},
+								{
+									"name": "default",
+									"bool": {
+										"computed_optional_required": "computed",
+										"description": "If true, the custom status is set to default. If false, the custom status is set to non-default"
+									}
+								},
+								{
+									"name": "id",
+									"int64": {
+										"computed_optional_required": "computed",
+										"description": "Automatically assigned when the custom ticket status is created"
+									}
+								},
+								{
+									"name": "raw_agent_label",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The dynamic content placeholder. If the dynamic content placeholder is not available, this is the \"agent_label\" value. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "raw_description",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The dynamic content placeholder. If the dynamic content placeholder is not available, this is the \"description\" value. [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "raw_end_user_description",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The dynamic content placeholder. If the dynamic content placeholder is not available, this is the \"end_user_description\" value. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "raw_end_user_label",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The dynamic content placeholder. If the dynamic content placeholder is not available, this is the \"end_user_label\" value. See [Dynamic Content Items](/api-reference/ticketing/ticket-management/dynamic_content/)"
+									}
+								},
+								{
+									"name": "updated_at",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The date and time the custom ticket status was last updated"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "custom_status_id",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "The id of the custom status"
+						}
+					}
+				]
+			}
+		}
+	],
+	"version": "0.1"
+}

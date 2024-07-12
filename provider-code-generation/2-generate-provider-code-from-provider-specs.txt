@@ -1,0 +1,1 @@
+tfplugingen-framework generate all --input output/provider_code_spec.json --output output/zendesk_provider_generated
