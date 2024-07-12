@@ -1,0 +1,21 @@
+provider:
+  name: zendesk
+resources:
+  custom_status:
+    create:
+      path: /api/v2/custom_statuses
+      method: POST
+    read:
+      path: /api/v2/custom_statuses/{custom_status_id}
+      method: GET
+    update:
+      path: /api/v2/custom_statuses/{custom_status_id}
+      method: PUT
+data_sources:
+  custom_status:
+    read:
+      path: /api/v2/custom_statuses/{custom_status_id}
+      method: GET
+
+
+

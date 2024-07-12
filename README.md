@@ -4,6 +4,8 @@
 
 # Zendesk Terraform Provider by andsafe-AG
 
+[Documentation in Terraform Registry](https://registry.terraform.io/providers/andsafe-AG/zendesk/latest/docs)
+
 This Terraform Provider is developed on terraform Plugin Framework and integrates existing Zendesk Terraform provider with [Terraform Provider Zendesk by Nukosuke ](https://registry.terraform.io/providers/nukosuke/zendesk/latest/docs)
 
 28.06.2024 - Combined existing provider with [Terraform Provider Zendesk by Nukosuke (GitHub)](https://github.com/nukosuke/terraform-provider-zendesk)
@@ -25,7 +27,7 @@ terraform {
   required_providers {
     zendesk = {
       source  = "andsafe-AG/zendesk"
-      version = ">= 1.0.0"
+      version = ">= 1.1.0"
     }
   }
 }
