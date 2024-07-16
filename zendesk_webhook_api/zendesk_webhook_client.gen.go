@@ -39,22 +39,19 @@ type ListWebhooksParams struct {
 
 // CreateOrCloneWebhookJSONBody defines parameters for CreateOrCloneWebhook.
 type CreateOrCloneWebhookJSONBody struct {
-	Webhook *struct {
+	Webhook struct {
 		Authentication *struct {
-			AddPosition *string `json:"add_position,omitempty"`
-			Data        *struct {
+			AddPosition string `json:"add_position"`
+			Data        struct {
 				Password *string `json:"password,omitempty"`
+				Token    *string `json:"token,omitempty"`
 				Username *string `json:"username,omitempty"`
-			} `json:"data,omitempty"`
-			Type *string `json:"type,omitempty"`
+			} `json:"data"`
+			Type string `json:"type"`
 		} `json:"authentication,omitempty"`
-		CustomHeaders *struct {
-			Adc5  *string `json:"adc5,omitempty"`
-			EaD01 *string `json:"ea_d01,omitempty"`
-			Qui2d *string `json:"qui2d,omitempty"`
-		} `json:"custom_headers,omitempty"`
-		Description    *string `json:"description,omitempty"`
-		Endpoint       *string `json:"endpoint,omitempty"`
+		CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+		Description    *string            `json:"description,omitempty"`
+		Endpoint       string             `json:"endpoint"`
 		ExternalSource *struct {
 			Data *struct {
 				AppId          *string `json:"app_id,omitempty"`
@@ -62,16 +59,16 @@ type CreateOrCloneWebhookJSONBody struct {
 			} `json:"data,omitempty"`
 			Type *string `json:"type,omitempty"`
 		} `json:"external_source,omitempty"`
-		HttpMethod    *string `json:"http_method,omitempty"`
-		Name          *string `json:"name,omitempty"`
-		RequestFormat *string `json:"request_format,omitempty"`
+		HttpMethod    string `json:"http_method"`
+		Name          string `json:"name"`
+		RequestFormat string `json:"request_format"`
 		SigningSecret *struct {
 			Algorithm *string `json:"algorithm,omitempty"`
 			Secret    *string `json:"secret,omitempty"`
 		} `json:"signing_secret,omitempty"`
-		Status        *string   `json:"status,omitempty"`
+		Status        string    `json:"status"`
 		Subscriptions *[]string `json:"subscriptions,omitempty"`
-	} `json:"webhook,omitempty"`
+	} `json:"webhook"`
 }
 
 // CreateOrCloneWebhookParams defines parameters for CreateOrCloneWebhook.
@@ -83,13 +80,10 @@ type CreateOrCloneWebhookParams struct {
 // TestWebhookJSONBody defines parameters for TestWebhook.
 type TestWebhookJSONBody struct {
 	Request *struct {
-		CustomHeaders *struct {
-			Id5   *string `json:"id_5,omitempty"`
-			Sint9 *string `json:"sint_9,omitempty"`
-		} `json:"custom_headers,omitempty"`
-		Endpoint        *string `json:"endpoint,omitempty"`
-		HttpMethod      *string `json:"http_method,omitempty"`
-		Payload         *string `json:"payload,omitempty"`
+		CustomHeaders   *map[string]string `json:"custom_headers,omitempty"`
+		Endpoint        *string            `json:"endpoint,omitempty"`
+		HttpMethod      *string            `json:"http_method,omitempty"`
+		Payload         *string            `json:"payload,omitempty"`
 		QueryParameters *[]struct {
 			Key   *string `json:"key,omitempty"`
 			Value *string `json:"value,omitempty"`
@@ -115,14 +109,11 @@ type PatchWebhookJSONBody struct {
 			} `json:"data,omitempty"`
 			Type *string `json:"type,omitempty"`
 		} `json:"authentication,omitempty"`
-		CreatedAt     *string `json:"created_at,omitempty"`
-		CreatedBy     *string `json:"created_by,omitempty"`
-		CustomHeaders *struct {
-			Exercitation4 *string `json:"exercitation_4,omitempty"`
-			Officiafe     *string `json:"officiafe,omitempty"`
-		} `json:"custom_headers,omitempty"`
-		Description    *string `json:"description,omitempty"`
-		Endpoint       *string `json:"endpoint,omitempty"`
+		CreatedAt      *string            `json:"created_at,omitempty"`
+		CreatedBy      *string            `json:"created_by,omitempty"`
+		CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+		Description    *string            `json:"description,omitempty"`
+		Endpoint       *string            `json:"endpoint,omitempty"`
 		ExternalSource *struct {
 			Data *struct {
 				AppId          *string `json:"app_id,omitempty"`
@@ -156,13 +147,11 @@ type UpdateWebhookJSONBody struct {
 			} `json:"data,omitempty"`
 			Type *string `json:"type,omitempty"`
 		} `json:"authentication,omitempty"`
-		CreatedAt     *string `json:"created_at,omitempty"`
-		CreatedBy     *string `json:"created_by,omitempty"`
-		CustomHeaders *struct {
-			Enim733 *string `json:"enim_733,omitempty"`
-		} `json:"custom_headers,omitempty"`
-		Description    *string `json:"description,omitempty"`
-		Endpoint       *string `json:"endpoint,omitempty"`
+		CreatedAt      *string            `json:"created_at,omitempty"`
+		CreatedBy      *string            `json:"created_by,omitempty"`
+		CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+		Description    *string            `json:"description,omitempty"`
+		Endpoint       *string            `json:"endpoint,omitempty"`
 		ExternalSource *struct {
 			Data *struct {
 				AppId          *string `json:"app_id,omitempty"`
@@ -1298,16 +1287,11 @@ type ListWebhooksWrap struct {
 				} `json:"data,omitempty"`
 				Type *string `json:"type,omitempty"`
 			} `json:"authentication,omitempty"`
-			CreatedAt     *string `json:"created_at,omitempty"`
-			CreatedBy     *string `json:"created_by,omitempty"`
-			CustomHeaders *struct {
-				Aliqua36   *string `json:"aliqua_36_,omitempty"`
-				Aliquac    *string `json:"aliquac,omitempty"`
-				Occaecat2  *string `json:"occaecat2,omitempty"`
-				Proident63 *string `json:"proident63,omitempty"`
-			} `json:"custom_headers,omitempty"`
-			Description    *string `json:"description,omitempty"`
-			Endpoint       *string `json:"endpoint,omitempty"`
+			CreatedAt      *string            `json:"created_at,omitempty"`
+			CreatedBy      *string            `json:"created_by,omitempty"`
+			CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+			Description    *string            `json:"description,omitempty"`
+			Endpoint       *string            `json:"endpoint,omitempty"`
 			ExternalSource *struct {
 				Data *struct {
 					AppId          *string `json:"app_id,omitempty"`
@@ -1359,13 +1343,11 @@ type CreateOrCloneWebhookWrap struct {
 				} `json:"data,omitempty"`
 				Type *string `json:"type,omitempty"`
 			} `json:"authentication,omitempty"`
-			CreatedAt     *string `json:"created_at,omitempty"`
-			CreatedBy     *string `json:"created_by,omitempty"`
-			CustomHeaders *struct {
-				Cillumd8 *string `json:"cillumd8,omitempty"`
-			} `json:"custom_headers,omitempty"`
-			Description    *string `json:"description,omitempty"`
-			Endpoint       *string `json:"endpoint,omitempty"`
+			CreatedAt      *string            `json:"created_at,omitempty"`
+			CreatedBy      *string            `json:"created_by,omitempty"`
+			CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+			Description    *string            `json:"description,omitempty"`
+			Endpoint       *string            `json:"endpoint,omitempty"`
 			ExternalSource *struct {
 				Data *struct {
 					AppId          *string `json:"app_id,omitempty"`
@@ -1529,13 +1511,11 @@ type ShowWebhookWrap struct {
 				} `json:"data,omitempty"`
 				Type *string `json:"type,omitempty"`
 			} `json:"authentication,omitempty"`
-			CreatedAt     *string `json:"created_at,omitempty"`
-			CreatedBy     *string `json:"created_by,omitempty"`
-			CustomHeaders *struct {
-				Cillumd8 *string `json:"cillumd8,omitempty"`
-			} `json:"custom_headers,omitempty"`
-			Description    *string `json:"description,omitempty"`
-			Endpoint       *string `json:"endpoint,omitempty"`
+			CreatedAt      *string            `json:"created_at,omitempty"`
+			CreatedBy      *string            `json:"created_by,omitempty"`
+			CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+			Description    *string            `json:"description,omitempty"`
+			Endpoint       *string            `json:"endpoint,omitempty"`
 			ExternalSource *struct {
 				Data *struct {
 					AppId          *string `json:"app_id,omitempty"`
@@ -2049,16 +2029,11 @@ func ParseListWebhooksWrap(rsp *http.Response) (*ListWebhooksWrap, error) {
 					} `json:"data,omitempty"`
 					Type *string `json:"type,omitempty"`
 				} `json:"authentication,omitempty"`
-				CreatedAt     *string `json:"created_at,omitempty"`
-				CreatedBy     *string `json:"created_by,omitempty"`
-				CustomHeaders *struct {
-					Aliqua36   *string `json:"aliqua_36_,omitempty"`
-					Aliquac    *string `json:"aliquac,omitempty"`
-					Occaecat2  *string `json:"occaecat2,omitempty"`
-					Proident63 *string `json:"proident63,omitempty"`
-				} `json:"custom_headers,omitempty"`
-				Description    *string `json:"description,omitempty"`
-				Endpoint       *string `json:"endpoint,omitempty"`
+				CreatedAt      *string            `json:"created_at,omitempty"`
+				CreatedBy      *string            `json:"created_by,omitempty"`
+				CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+				Description    *string            `json:"description,omitempty"`
+				Endpoint       *string            `json:"endpoint,omitempty"`
 				ExternalSource *struct {
 					Data *struct {
 						AppId          *string `json:"app_id,omitempty"`
@@ -2114,13 +2089,11 @@ func ParseCreateOrCloneWebhookWrap(rsp *http.Response) (*CreateOrCloneWebhookWra
 					} `json:"data,omitempty"`
 					Type *string `json:"type,omitempty"`
 				} `json:"authentication,omitempty"`
-				CreatedAt     *string `json:"created_at,omitempty"`
-				CreatedBy     *string `json:"created_by,omitempty"`
-				CustomHeaders *struct {
-					Cillumd8 *string `json:"cillumd8,omitempty"`
-				} `json:"custom_headers,omitempty"`
-				Description    *string `json:"description,omitempty"`
-				Endpoint       *string `json:"endpoint,omitempty"`
+				CreatedAt      *string            `json:"created_at,omitempty"`
+				CreatedBy      *string            `json:"created_by,omitempty"`
+				CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+				Description    *string            `json:"description,omitempty"`
+				Endpoint       *string            `json:"endpoint,omitempty"`
 				ExternalSource *struct {
 					Data *struct {
 						AppId          *string `json:"app_id,omitempty"`
@@ -2320,13 +2293,11 @@ func ParseShowWebhookWrap(rsp *http.Response) (*ShowWebhookWrap, error) {
 					} `json:"data,omitempty"`
 					Type *string `json:"type,omitempty"`
 				} `json:"authentication,omitempty"`
-				CreatedAt     *string `json:"created_at,omitempty"`
-				CreatedBy     *string `json:"created_by,omitempty"`
-				CustomHeaders *struct {
-					Cillumd8 *string `json:"cillumd8,omitempty"`
-				} `json:"custom_headers,omitempty"`
-				Description    *string `json:"description,omitempty"`
-				Endpoint       *string `json:"endpoint,omitempty"`
+				CreatedAt      *string            `json:"created_at,omitempty"`
+				CreatedBy      *string            `json:"created_by,omitempty"`
+				CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
+				Description    *string            `json:"description,omitempty"`
+				Endpoint       *string            `json:"endpoint,omitempty"`
 				ExternalSource *struct {
 					Data *struct {
 						AppId          *string `json:"app_id,omitempty"`
