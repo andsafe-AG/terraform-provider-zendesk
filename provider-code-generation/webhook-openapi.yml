@@ -785,10 +785,11 @@ paths:
                         example: <string>
                       custom_headers:
                         type: object
-                        properties:
-                          cillumd8:
-                            type: string
-                            example: <string>
+                        additionalProperties:
+                          type: string
+                          example:
+                            header-one: <string>
+                            header-two: <string>
                       description:
                         type: string
                         example: <string>
@@ -860,7 +861,7 @@ paths:
                       created_at: <dateTime>
                       created_by: <string>
                       custom_headers:
-                        cillumd8: <string>
+                        header-one: <string>
                       description: <string>
                       endpoint: <string>
                       external_source:
@@ -1029,6 +1030,7 @@ paths:
           Admins cannot set `external_source` and `signing_secret` when updating a webhook.
       operationId: updateWebhook
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1063,10 +1065,10 @@ paths:
                       example: <string>
                     custom_headers:
                       type: object
-                      properties:
-                        enim_733:
-                          type: string
-                          example: <string>
+                      additionalProperties:
+                        type: string
+                        example:
+                          header-one: <string>
                     description:
                       type: string
                       example: <string>
@@ -1137,7 +1139,7 @@ paths:
                 created_at: <dateTime>
                 created_by: <string>
                 custom_headers:
-                  enim_733: <string>
+                  header-one: <string>
                 description: <string>
                 endpoint: <string>
                 external_source:
@@ -1459,6 +1461,7 @@ paths:
           Admins cannot set `external_source` and `signing_secret` when patching a webhook.
       operationId: patchWebhook
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1493,13 +1496,11 @@ paths:
                       example: <string>
                     custom_headers:
                       type: object
-                      properties:
-                        exercitation_4:
-                          type: string
-                          example: <string>
-                        officiafe:
-                          type: string
-                          example: <string>
+                      additionalProperties:
+                        type: string
+                        example:
+                          header-one: <string>
+                          header-two: <string>
                     description:
                       type: string
                       example: <string>
@@ -1570,8 +1571,8 @@ paths:
                 created_at: <dateTime>
                 created_by: <string>
                 custom_headers:
-                  exercitation_4: <string>
-                  officiafe: <string>
+                  header-one: <string>
+                  header-two: <string>
                 description: <string>
                 endpoint: <string>
                 external_source:
@@ -1780,13 +1781,11 @@ paths:
                   properties:
                     custom_headers:
                       type: object
-                      properties:
-                        id_5:
-                          type: string
-                          example: <string>
-                        sint_9:
-                          type: string
-                          example: <string>
+                      additionalProperties:
+                        type: string
+                        example:
+                          header-one: "new_value_one"
+                          header-two: "new_value_two"
                     endpoint:
                       type: string
                       example: <string>
@@ -1818,8 +1817,8 @@ paths:
             example:
               request:
                 custom_headers:
-                  id_5: <string>
-                  sint_9: <string>
+                  header-one: "new_value_one"
+                  header-two: "new_value_two"
                 endpoint: <string>
                 http_method: PUT
                 payload: <string>
@@ -2046,19 +2045,11 @@ paths:
                           example: <string>
                         custom_headers:
                           type: object
-                          properties:
-                            aliqua_36_:
-                              type: string
-                              example: <string>
-                            aliquac:
-                              type: string
-                              example: <string>
-                            occaecat2:
-                              type: string
-                              example: <string>
-                            proident63:
-                              type: string
-                              example: <string>
+                          additionalProperties:
+                            type: string
+                            example:
+                              header-one: "new_value_one"
+                              header-two: "new_value_two"
                         description:
                           type: string
                           example: <string>
@@ -2127,7 +2118,7 @@ paths:
                         created_at: <dateTime>
                         created_by: <string>
                         custom_headers:
-                          aliqua_36_: <string>
+                          header-one: "new_value_one"
                         description: <string>
                         endpoint: <string>
                         external_source:
@@ -2156,9 +2147,9 @@ paths:
                         created_at: <dateTime>
                         created_by: <string>
                         custom_headers:
-                          aliquac: <string>
-                          occaecat2: <string>
-                          proident63: <string>
+                          header-one: "new_value_one"
+                          header-two: "new_value_two"
+                          header-three: "new_value_three"
                         description: <string>
                         endpoint: <string>
                         external_source:
@@ -2198,7 +2189,7 @@ paths:
                         created_at: <dateTime>
                         created_by: <string>
                         custom_headers:
-                          aliqua_36_: <string>
+                          header-one: "new_value_one"
                         description: <string>
                         endpoint: <string>
                         external_source:
@@ -2227,9 +2218,8 @@ paths:
                         created_at: <dateTime>
                         created_by: <string>
                         custom_headers:
-                          aliquac: <string>
-                          occaecat2: <string>
-                          proident63: <string>
+                          header-one: "new_value_one"
+                          header-two: "new_value_two"
                         description: <string>
                         endpoint: <string>
                         external_source:
@@ -2306,16 +2296,21 @@ paths:
             example: <string>
           description: id of the webhook to clone. Only required if cloning a webhook.
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - webhook
               properties:
                 webhook:
                   type: object
+                  required: [ endpoint, http_method, name, request_format, status ]
                   properties:
                     authentication:
                       type: object
+                      required: [ add_position, data, type ]
                       properties:
                         add_position:
                           type: string
@@ -2329,21 +2324,19 @@ paths:
                             username:
                               type: string
                               example: <string>
+                            token:
+                              type: string
+                              example: <string>
                         type:
                           type: string
                           example: bearer_token
                     custom_headers:
                       type: object
-                      properties:
-                        adc5:
-                          type: string
-                          example: <string>
-                        ea_d01:
-                          type: string
-                          example: <string>
-                        qui2d:
-                          type: string
-                          example: <string>
+                      additionalProperties:
+                        type: string
+                        example:
+                          header-one: "new_value_one"
+                          header-two: "new_value_two"
                     description:
                       type: string
                       example: <string>
@@ -2403,9 +2396,8 @@ paths:
                     username: <string>
                   type: bearer_token
                 custom_headers:
-                  adc5: <string>
-                  ea_d01: <string>
-                  qui2d: <string>
+                  header-one: "new_value_one"
+                  header-two: "new_value_two"
                 description: <string>
                 endpoint: <string>
                 external_source:
@@ -2457,10 +2449,11 @@ paths:
                         example: <string>
                       custom_headers:
                         type: object
-                        properties:
-                          cillumd8:
-                            type: string
-                            example: <string>
+                        additionalProperties:
+                          type: string
+                          example:
+                            header-one: <string>
+                            header-two: <string>
                       description:
                         type: string
                         example: <string>
@@ -2532,7 +2525,7 @@ paths:
                       created_at: <dateTime>
                       created_by: <string>
                       custom_headers:
-                        cillumd8: <string>
+                        header-one: <string>
                       description: <string>
                       endpoint: <string>
                       external_source:
