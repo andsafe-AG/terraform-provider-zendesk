@@ -1,0 +1,25 @@
+provider:
+  name: zendesk
+resources:
+  webhook:
+    create:
+      path: /api/v2/webhooks
+      method: POST
+    read:
+      path: /api/v2/webhooks/{webhook_id}
+      method: GET
+    update:
+      path: /api/v2/webhooks/{webhook_id}
+      method: PUT
+    delete:
+      path: /api/v2/webhooks/{webhook_id}
+      method: DELETE
+data_sources:
+  webhook:
+    read:
+      path: /api/v2/webhooks/{webhook_id}
+      method: GET
+  webhook_signing_secret:
+    read:
+      path: /api/v2/webhooks/{webhook_id}/signing_secret
+      method: GET
