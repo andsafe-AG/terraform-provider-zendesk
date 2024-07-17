@@ -89,7 +89,7 @@
 										"computed_optional_required": "computed",
 										"attributes": [
 											{
-												"name": "data",
+												"name": "external_source_data",
 												"single_nested": {
 													"computed_optional_required": "computed",
 													"attributes": [
@@ -155,7 +155,8 @@
 											{
 												"name": "secret",
 												"string": {
-													"computed_optional_required": "computed"
+													"computed_optional_required": "computed",
+													"sensitive": true
 												}
 											}
 										]
@@ -219,7 +220,8 @@
 								{
 									"name": "secret",
 									"string": {
-										"computed_optional_required": "computed"
+										"computed_optional_required": "computed",
+										"sensitive": true
 									}
 								}
 							]
@@ -250,7 +252,10 @@
 											{
 												"name": "add_position",
 												"string": {
-													"computed_optional_required": "required"
+													"computed_optional_required": "required",
+													"default": {
+														"static": "header"
+													}
 												}
 											},
 											{
@@ -317,7 +322,7 @@
 										"computed_optional_required": "computed_optional",
 										"attributes": [
 											{
-												"name": "data",
+												"name": "external_source_data",
 												"single_nested": {
 													"computed_optional_required": "computed_optional",
 													"attributes": [
@@ -360,24 +365,28 @@
 								{
 									"name": "request_format",
 									"string": {
-										"computed_optional_required": "required"
+										"computed_optional_required": "required",
+										"default": {
+											"static": "json"
+										}
 									}
 								},
 								{
 									"name": "signing_secret",
 									"single_nested": {
-										"computed_optional_required": "computed_optional",
+										"computed_optional_required": "computed",
 										"attributes": [
 											{
 												"name": "algorithm",
 												"string": {
-													"computed_optional_required": "computed_optional"
+													"computed_optional_required": "computed"
 												}
 											},
 											{
 												"name": "secret",
 												"string": {
-													"computed_optional_required": "computed_optional"
+													"computed_optional_required": "computed",
+													"sensitive": true
 												}
 											}
 										]
@@ -434,7 +443,7 @@
 					{
 						"name": "webhook_id",
 						"string": {
-							"computed_optional_required": "computed_optional",
+							"computed_optional_required": "computed",
 							"description": "(Required) Webhook id"
 						}
 					}
