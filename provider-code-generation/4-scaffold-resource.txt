@@ -1,0 +1,3 @@
+Execute this command to scaffold new resource files.
+
+tfplugingen-framework scaffold resource --name webhook --output-dir ./internal/provider
