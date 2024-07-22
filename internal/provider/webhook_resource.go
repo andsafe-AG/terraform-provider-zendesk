@@ -99,19 +99,44 @@ func (r *webhookResource) Create(ctx context.Context, req resource.CreateRequest
 }
 
 func (r *webhookResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data resource_webhook.WebhookModel
+	var state resource_webhook.WebhookModel
 
 	// Read Terraform prior state data into the model
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
 	if resp.Diagnostics.HasError() {
+		logErrors(ctx, resp)
 		return
 	}
 
-	// Read API call logic
+	tflog.Debug(ctx, "Read webhook resource with id: "+fmt.Sprintf("%+v", state.WebhookId))
+	webhookId := state.WebhookId.String()
+
+	// Get Webhook data from the API
+	webhookResponse, err := r.client.GetClient().ShowWebhookWithResponse(ctx, webhookId, nil)
+
+	if err != nil {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": err})
+		resp.Diagnostics.AddError("Error reading webhook data from the API", err.Error())
+		return
+	}
+
+	if webhookResponse.StatusCode() != 200 {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": webhookResponse.Body})
+		resp.Diagnostics.AddError("Error reading webhook data from the API", fmt.Sprintf("%+v", webhookResponse.Body))
+		return
+	}
+
+	webhookMapper := resource_webhook.NewWebhookMapper()
+
+	webhookMapper.PutWebhookShowResponseToStateModel(ctx, webhookResponse, &state)
 
 	// Save updated data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}
+
+func logErrors(ctx context.Context, resp *resource.ReadResponse) {
+	tflog.Error(ctx, "Error reading Terraform prior state data into the model: ", map[string]any{"error": resp.Diagnostics.Errors()})
 }
 
 func (r *webhookResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
