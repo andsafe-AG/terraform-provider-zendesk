@@ -247,7 +247,7 @@
 								{
 									"name": "authentication",
 									"single_nested": {
-										"computed_optional_required": "computed_optional",
+										"computed_optional_required": "optional",
 										"attributes": [
 											{
 												"name": "add_position",
@@ -266,21 +266,21 @@
 														{
 															"name": "password",
 															"string": {
-																"computed_optional_required": "computed_optional",
+																"computed_optional_required": "optional",
 																"sensitive": true
 															}
 														},
 														{
 															"name": "token",
 															"string": {
-																"computed_optional_required": "computed_optional",
+																"computed_optional_required": "optional",
 																"sensitive": true
 															}
 														},
 														{
 															"name": "username",
 															"string": {
-																"computed_optional_required": "computed_optional"
+																"computed_optional_required": "optional"
 															}
 														}
 													]

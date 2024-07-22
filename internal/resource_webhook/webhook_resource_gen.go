@@ -31,17 +31,14 @@ func WebhookResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"password": schema.StringAttribute{
 										Optional:  true,
-										Computed:  true,
 										Sensitive: true,
 									},
 									"token": schema.StringAttribute{
 										Optional:  true,
-										Computed:  true,
 										Sensitive: true,
 									},
 									"username": schema.StringAttribute{
 										Optional: true,
-										Computed: true,
 									},
 								},
 								CustomType: DataType{
@@ -61,7 +58,6 @@ func WebhookResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						Optional: true,
-						Computed: true,
 					},
 					"created_at": schema.StringAttribute{
 						Computed: true,
