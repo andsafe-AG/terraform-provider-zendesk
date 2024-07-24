@@ -38,6 +38,30 @@ func (m *WebhookMapper) PutCreateResponseToStateModel(ctx context.Context, respo
 	return nil
 }
 
+func (m *WebhookMapper) MapToCreateRequestBody(ctx context.Context, model *WebhookModel) (*zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody, diag.Diagnostics) {
+
+	webhookRequestBody := zendesk_webhook_api.WebhookWithSensitiveData{}
+	request := zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody{Webhook: &webhookRequestBody}
+
+	diagnostics := mapPlanModelToWebhookRequestBody(ctx, model, &webhookRequestBody)
+	if diagnostics != nil && diagnostics.HasError() {
+		return nil, diagnostics
+	}
+
+	return &request, nil
+}
+
+func (m *WebhookMapper) MapToUpdateRequestBody(ctx context.Context, r *WebhookModel) (zendesk_webhook_api.UpdateWebhookJSONRequestBody, diag.Diagnostics) {
+	webhookRequestBody := zendesk_webhook_api.WebhookWithSensitiveData{}
+	request := zendesk_webhook_api.UpdateWebhookJSONRequestBody{Webhook: &webhookRequestBody}
+	diags := mapPlanModelToWebhookRequestBody(ctx, r, request.Webhook)
+	if diags != nil && diags.HasError() {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
+		return request, diags
+	}
+	return request, nil
+}
+
 func putWebhookResponseBodyToStateModel(ctx context.Context, webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive, webhookState *WebhookModel) diag.Diagnostics {
 	webhookState.WebhookId = types.StringValue(*webhookWithoutSensitive.Id)
 	authentication, diags := mapAuthentication(ctx, webhookWithoutSensitive)
@@ -96,19 +120,17 @@ func putWebhookResponseBodyToStateModel(ctx context.Context, webhookWithoutSensi
 	return nil
 }
 
-func (m *WebhookMapper) MapToRequestBody(ctx context.Context, model *WebhookModel) (*zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody, diag.Diagnostics) {
-	request := zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody{}
-
+func mapPlanModelToWebhookRequestBody(ctx context.Context, model *WebhookModel, webhookRequestBody *zendesk_webhook_api.WebhookWithSensitiveData) diag.Diagnostics {
 	authentication := model.Webhook.Authentication
 	if !authentication.IsNull() && !authentication.IsUnknown() {
 		authenticationModel, diags := NewAuthenticationValue(authentication.AttributeTypes(ctx), authentication.Attributes())
 		if diags.HasError() {
 			tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
-			return nil, diags
+			return diags
 		}
 
-		request.Webhook.Authentication = &zendesk_webhook_api.Authentication{
-			Data:        zendesk_webhook_api.AuthenticationData{},
+		webhookRequestBody.Authentication = &zendesk_webhook_api.Authentication{
+			Data:        &zendesk_webhook_api.AuthenticationData{},
 			AddPosition: authenticationModel.AddPosition.ValueString(),
 			Type:        authenticationModel.AuthenticationType.ValueString(),
 		}
@@ -119,45 +141,48 @@ func (m *WebhookMapper) MapToRequestBody(ctx context.Context, model *WebhookMode
 
 			if diags.HasError() {
 				tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
-				return &request, diags
+				return diags
 			}
-			request.Webhook.Authentication.Data.Username = authDataModel.Username.ValueStringPointer()
-			request.Webhook.Authentication.Data.Password = authDataModel.Password.ValueStringPointer()
-			request.Webhook.Authentication.Data.Token = authDataModel.Token.ValueStringPointer()
+			webhookRequestBody.Authentication.Data.Username = authDataModel.Username.ValueStringPointer()
+			webhookRequestBody.Authentication.Data.Password = authDataModel.Password.ValueStringPointer()
+			webhookRequestBody.Authentication.Data.Token = authDataModel.Token.ValueStringPointer()
 		}
 	}
 
 	customHeaders := getCustomHeaders(ctx, model)
-	request.Webhook.CustomHeaders = &customHeaders
-	request.Webhook.Description = model.Webhook.Description.ValueStringPointer()
-	request.Webhook.Endpoint = model.Webhook.Endpoint.ValueString()
+	if customHeaders != nil {
+		webhookRequestBody.CustomHeaders = &customHeaders
+	}
+	webhookRequestBody.Description = model.Webhook.Description.ValueStringPointer()
+	webhookRequestBody.Endpoint = model.Webhook.Endpoint.ValueString()
 
-	diagnostics := setExternalSource(ctx, model, &request)
+	diagnostics := setExternalSource(ctx, model, webhookRequestBody)
 	if diagnostics.HasError() {
-		return &request, diagnostics
+		return diagnostics
 	}
 
-	request.Webhook.HttpMethod = model.Webhook.HttpMethod.ValueString()
-	request.Webhook.Name = model.Webhook.Name.ValueString()
-	request.Webhook.RequestFormat = model.Webhook.RequestFormat.ValueString()
-	setSigningSecret(ctx, model, &request)
-	request.Webhook.Status = model.Webhook.Status.ValueString()
+	webhookRequestBody.HttpMethod = model.Webhook.HttpMethod.ValueString()
+	webhookRequestBody.Name = model.Webhook.Name.ValueString()
+	webhookRequestBody.RequestFormat = model.Webhook.RequestFormat.ValueString()
+	setSigningSecret(model, webhookRequestBody)
+	webhookRequestBody.Status = model.Webhook.Status.ValueString()
 	subscriptions := getSubscriptions(ctx, model)
-	request.Webhook.Subscriptions = &subscriptions
-
-	return &request, nil
+	if subscriptions != nil {
+		webhookRequestBody.Subscriptions = &subscriptions
+	}
+	return nil
 }
 
-func setSigningSecret(ctx context.Context, model *WebhookModel, request *zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody) {
+func setSigningSecret(model *WebhookModel, webhookWithSensitiveData *zendesk_webhook_api.WebhookWithSensitiveData) {
 	if !model.Webhook.SigningSecret.IsNull() && !model.Webhook.SigningSecret.IsUnknown() {
-		request.Webhook.SigningSecret = &zendesk_webhook_api.SigningSecret{}
+		webhookWithSensitiveData.SigningSecret = &zendesk_webhook_api.SigningSecret{}
 		algorithm := model.Webhook.SigningSecret.Attributes()["algorithm"]
 		if !algorithm.IsNull() {
 			algorithmString, ok := algorithm.(types.String)
 			if !ok {
 				panic("unexpected type of algorithm")
 			}
-			request.Webhook.SigningSecret.Algorithm = algorithmString.ValueStringPointer()
+			webhookWithSensitiveData.SigningSecret.Algorithm = algorithmString.ValueStringPointer()
 		}
 
 		secret := model.Webhook.SigningSecret.Attributes()["secret"]
@@ -166,24 +191,25 @@ func setSigningSecret(ctx context.Context, model *WebhookModel, request *zendesk
 			if !ok {
 				panic("unexpected type of secret")
 			}
-			request.Webhook.SigningSecret.Secret = secretString.ValueStringPointer()
+			webhookWithSensitiveData.SigningSecret.Secret = secretString.ValueStringPointer()
 		}
 	}
 }
 
-func setExternalSource(ctx context.Context, model *WebhookModel, request *zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody) diag.Diagnostics {
-	if !model.Webhook.ExternalSource.IsNull() && !model.Webhook.ExternalSource.IsUnknown() {
-		externalSourceModel, diags := NewExternalSourceValue(model.Webhook.ExternalSource.AttributeTypes(ctx), model.Webhook.ExternalSource.Attributes())
+func setExternalSource(ctx context.Context, model *WebhookModel, webhookWithSensitiveData *zendesk_webhook_api.WebhookWithSensitiveData) diag.Diagnostics {
+	webhookModelBody := model.Webhook
+	if !webhookModelBody.ExternalSource.IsNull() && !webhookModelBody.ExternalSource.IsUnknown() {
+		externalSourceModel, diags := NewExternalSourceValue(webhookModelBody.ExternalSource.AttributeTypes(ctx), webhookModelBody.ExternalSource.Attributes())
 		if diags.HasError() {
 			tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
 			return diags
 		}
 
-		request.Webhook.ExternalSource = &zendesk_webhook_api.ExternalSource{
+		webhookWithSensitiveData.ExternalSource = &zendesk_webhook_api.ExternalSource{
 			Data: &zendesk_webhook_api.ExternalSourceData{},
 		}
 
-		request.Webhook.ExternalSource.Type = externalSourceModel.ExternalSourceType.ValueStringPointer()
+		webhookWithSensitiveData.ExternalSource.Type = externalSourceModel.ExternalSourceType.ValueStringPointer()
 
 		if !externalSourceModel.ExternalSourceData.IsNull() && !externalSourceModel.ExternalSourceData.IsUnknown() {
 			externalSourceDataModel, diags := NewExternalSourceDataValue(externalSourceModel.ExternalSourceData.AttributeTypes(ctx), externalSourceModel.ExternalSourceData.Attributes())
@@ -191,8 +217,8 @@ func setExternalSource(ctx context.Context, model *WebhookModel, request *zendes
 				tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
 				return diags
 			}
-			request.Webhook.ExternalSource.Data.AppId = externalSourceDataModel.AppId.ValueStringPointer()
-			request.Webhook.ExternalSource.Data.InstallationId = externalSourceDataModel.InstallationId.ValueStringPointer()
+			webhookWithSensitiveData.ExternalSource.Data.AppId = externalSourceDataModel.AppId.ValueStringPointer()
+			webhookWithSensitiveData.ExternalSource.Data.InstallationId = externalSourceDataModel.InstallationId.ValueStringPointer()
 		}
 	}
 	return nil
@@ -200,12 +226,18 @@ func setExternalSource(ctx context.Context, model *WebhookModel, request *zendes
 
 func getSubscriptions(ctx context.Context, model *WebhookModel) []string {
 	subscriptions := make([]string, 0)
+	if model.Webhook.Subscriptions.IsNull() || model.Webhook.Subscriptions.IsUnknown() {
+		return nil
+	}
 	model.Webhook.Subscriptions.ElementsAs(ctx, &subscriptions, true)
 	return subscriptions
 }
 
 func getCustomHeaders(ctx context.Context, model *WebhookModel) map[string]string {
 	customHeaders := make(map[string]string)
+	if model.Webhook.CustomHeaders.IsNull() || model.Webhook.CustomHeaders.IsUnknown() {
+		return nil
+	}
 	model.Webhook.CustomHeaders.ElementsAs(ctx, &customHeaders, true)
 	return customHeaders
 }

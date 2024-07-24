@@ -63,7 +63,7 @@ func TestWebhookMapper_PutWebhookShowResponseToStateModel(t *testing.T) {
 	}
 }
 
-func TestWebhookMapper_MapToRequestBody(t *testing.T) {
+func TestWebhookMapper_MapToCreateRequestBody(t *testing.T) {
 	type args struct {
 		ctx   context.Context
 		model *WebhookModel
@@ -83,7 +83,7 @@ func TestWebhookMapper_MapToRequestBody(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &WebhookMapper{}
-			gotRequestBody, gotDiagnostics := m.MapToRequestBody(tt.args.ctx, tt.args.model)
+			gotRequestBody, gotDiagnostics := m.MapToCreateRequestBody(tt.args.ctx, tt.args.model)
 			assert.DeepEqual(t, gotDiagnostics, tt.wantDiagnostics)
 			if !gotDiagnostics.HasError() {
 				assert.DeepEqual(t, gotRequestBody, tt.wantRequestBody)
@@ -92,6 +92,77 @@ func TestWebhookMapper_MapToRequestBody(t *testing.T) {
 	}
 }
 
+func TestWebhookMapper_MapToUpdateRequestBody(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		r   *WebhookModel
+	}
+	tests := []struct {
+		name            string
+		args            args
+		want            zendesk_webhook_api.UpdateWebhookJSONRequestBody
+		wantDiagnostics diag.Diagnostics
+	}{
+		{name: "all attributes filled",
+			args: args{ctx: context.Background(),
+				r: getCreateWebhookModel()},
+			want:            getUpdateRequestBody(),
+			wantDiagnostics: nil},
+		{name: "some attributes filled",
+			args: args{ctx: context.Background(),
+				r: getUpdateWebhookModelOnlyAuthenticationAttributes()},
+			want:            getUpdateRequestBodyOnlyAuthenticationAttributes(),
+			wantDiagnostics: nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := &WebhookMapper{}
+			gotRequestBody, gotDiagnostics := m.MapToUpdateRequestBody(tt.args.ctx, tt.args.r)
+
+			assert.DeepEqual(t, tt.wantDiagnostics, gotDiagnostics)
+			if gotDiagnostics == nil || !gotDiagnostics.HasError() {
+				assert.DeepEqual(t, tt.want, gotRequestBody)
+			}
+		})
+	}
+}
+
+func getUpdateRequestBodyOnlyAuthenticationAttributes() zendesk_webhook_api.UpdateWebhookJSONRequestBody {
+	password := "test-word2"
+	username := "test-user2"
+	return zendesk_webhook_api.UpdateWebhookJSONRequestBody{
+		Webhook: &zendesk_webhook_api.WebhookWithSensitiveData{
+			Authentication: &zendesk_webhook_api.Authentication{
+				AddPosition: "header",
+				Type:        "basic_auth",
+				Data: &zendesk_webhook_api.AuthenticationData{
+					Password: &password,
+					Username: &username,
+				},
+			},
+		},
+	}
+}
+
+func getUpdateRequestBody() zendesk_webhook_api.UpdateWebhookJSONRequestBody {
+	return zendesk_webhook_api.UpdateWebhookJSONRequestBody{
+		Webhook: createRequestBody200().Webhook,
+	}
+}
+
+func getUpdateWebhookModelOnlyAuthenticationAttributes() *WebhookModel {
+	model := WebhookModel{}
+	auth := NewAuthenticationValueNull()
+	auth.AuthenticationType = types.StringValue("basic_auth")
+	dataValue := NewDataValueNull()
+	dataValue.Username = types.StringValue("test-user2")
+	dataValue.Password = types.StringValue("test-word2")
+	auth.Data, _ = dataValue.ToObjectValue(context.Background())
+	auth.AddPosition = types.StringValue("header")
+	model.Webhook.Authentication, _ = auth.ToObjectValue(context.Background())
+
+	return &model
+}
 func getCreateWebhookModel() *WebhookModel {
 	model := WebhookModel{}
 	auth := NewAuthenticationValueNull()

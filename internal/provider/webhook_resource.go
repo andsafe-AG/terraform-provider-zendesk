@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"strconv"
@@ -92,7 +93,7 @@ func (r *webhookResource) Create(ctx context.Context, req resource.CreateRequest
 
 	tflog.Debug(ctx, "Create webhook resource with id: "+fmt.Sprintf("%+v", planModel.WebhookId))
 	webhookMapper := resource_webhook.NewWebhookMapper()
-	requestBody, diags := webhookMapper.MapToRequestBody(ctx, &planModel)
+	requestBody, diags := webhookMapper.MapToCreateRequestBody(ctx, &planModel)
 	if diags != nil && diags.HasError() {
 		resp.Diagnostics.Append(diags...)
 		return
@@ -165,7 +166,50 @@ func (r *webhookResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	// Update API call logic
+	webhookMapper := resource_webhook.NewWebhookMapper()
+
+	mappedRequestBody, diags := webhookMapper.MapToUpdateRequestBody(ctx, &data)
+	if diags != nil && diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+
+	response, err := r.client.GetClient().UpdateWebhookWithResponse(ctx, data.WebhookId.ValueString(), mappedRequestBody, nil)
+
+	if err != nil {
+		resp.Diagnostics.AddError("Error updating webhook data from the API", err.Error())
+		return
+	}
+
+	if response.StatusCode() == 404 {
+		resp.Diagnostics.AddError("Error updating webhook data from the API", "Webhook not found")
+		return
+	}
+
+	if response.StatusCode() == 400 {
+		responseErrors, err := json.Marshal(response.JSON400.Errors)
+		if err != nil {
+			resp.Diagnostics.AddError("Error updating webhook data from the API", "Bad Request: "+err.Error())
+			return
+		}
+		resp.Diagnostics.AddError("Error updating webhook data from the API", "Bad Request: "+string(responseErrors))
+		return
+
+	}
+	if response.StatusCode() != 204 {
+		detail := "Unexpected response status code: " + strconv.Itoa(response.StatusCode()) + ", Response Body: " + fmt.Sprintf("%+v", response.Body)
+		resp.Diagnostics.AddError("Error updating webhook data from the API", detail)
+		return
+	}
+
+	showResponse, err := r.client.GetClient().ShowWebhookWithResponse(ctx, data.WebhookId.ValueString(), nil)
+
+	if err != nil {
+		resp.Diagnostics.AddError("Error reading webhook data from the API after successful update", err.Error())
+		return
+	}
+
+	webhookMapper.PutWebhookShowResponseToStateModel(ctx, showResponse, &data)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
