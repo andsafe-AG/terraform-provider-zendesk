@@ -521,7 +521,7 @@ func NewListWebhooksRequest(server string, params *ListWebhooksParams) (*http.Re
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/api/v2/webhooks")
+	operationPath := "/api/v2/webhooks"
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -661,7 +661,7 @@ func NewCreateOrCloneWebhookRequestWithBody(server string, params *CreateOrClone
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/api/v2/webhooks")
+	operationPath := "/api/v2/webhooks"
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -723,7 +723,7 @@ func NewTestWebhookRequestWithBody(server string, params *TestWebhookParams, con
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/api/v2/webhooks/test")
+	operationPath := "/api/v2/webhooks/test"
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
