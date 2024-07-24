@@ -167,15 +167,18 @@ func modelForResponse200AllAttributes(t *testing.T, model *WebhookModel) {
 	assert.Equal(t, "test webhook", model.Webhook.Description.ValueString())
 	assert.Equal(t, "json", model.Webhook.RequestFormat.ValueString())
 	assert.Equal(t, "POST", model.Webhook.HttpMethod.ValueString())
-	assert.Equal(t, "app_installation", model.Webhook.ExternalSource.Attributes()["type"].(types.String).ValueString())
-	assert.Equal(t, "345", model.Webhook.ExternalSource.Attributes()["external_source_data"].(types.Object).Attributes()["app_id"].(types.String).ValueString())
-	assert.Equal(t, "id", model.Webhook.ExternalSource.Attributes()["external_source_data"].(types.Object).Attributes()["installation_id"].(types.String).ValueString())
-	assert.Equal(t, "value1", model.Webhook.CustomHeaders.Elements()["header1"].(types.String).ValueString())
-	assert.Equal(t, "value2", model.Webhook.CustomHeaders.Elements()["header2"].(types.String).ValueString())
+	assert.Equal(t, "\"app_installation\"", model.Webhook.ExternalSource.Attributes()["type"].String())
+
+	externalSourceData, ok := model.Webhook.ExternalSource.Attributes()["external_source_data"].(types.Object)
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "\"345\"", externalSourceData.Attributes()["app_id"].String())
+	assert.Equal(t, "\"id\"", externalSourceData.Attributes()["installation_id"].String())
+	assert.Equal(t, "\"value1\"", model.Webhook.CustomHeaders.Elements()["header1"].String())
+	assert.Equal(t, "\"value2\"", model.Webhook.CustomHeaders.Elements()["header2"].String())
 	assert.Equal(t, "active", model.Webhook.Status.ValueString())
-	assert.Equal(t, "subscription1", model.Webhook.Subscriptions.Elements()[0].(types.String).ValueString())
-	assert.Equal(t, "secret-value", model.Webhook.SigningSecret.Attributes()["secret"].(types.String).ValueString())
-	assert.Equal(t, "SHA256", model.Webhook.SigningSecret.Attributes()["algorithm"].(types.String).ValueString())
+	assert.Equal(t, "\"subscription1\"", model.Webhook.Subscriptions.Elements()[0].String())
+	assert.Equal(t, "\"secret-value\"", model.Webhook.SigningSecret.Attributes()["secret"].String())
+	assert.Equal(t, "\"SHA256\"", model.Webhook.SigningSecret.Attributes()["algorithm"].String())
 
 }
 

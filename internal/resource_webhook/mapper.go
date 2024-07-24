@@ -127,7 +127,7 @@ func (m *WebhookMapper) MapToRequestBody(ctx context.Context, model *WebhookMode
 		}
 	}
 
-	customHeaders := getCustomHeaders(model)
+	customHeaders := getCustomHeaders(ctx, model)
 	request.Webhook.CustomHeaders = &customHeaders
 	request.Webhook.Description = model.Webhook.Description.ValueStringPointer()
 	request.Webhook.Endpoint = model.Webhook.Endpoint.ValueString()
@@ -140,25 +140,33 @@ func (m *WebhookMapper) MapToRequestBody(ctx context.Context, model *WebhookMode
 	request.Webhook.HttpMethod = model.Webhook.HttpMethod.ValueString()
 	request.Webhook.Name = model.Webhook.Name.ValueString()
 	request.Webhook.RequestFormat = model.Webhook.RequestFormat.ValueString()
-	setSigningSecret(model, &request)
+	setSigningSecret(ctx, model, &request)
 	request.Webhook.Status = model.Webhook.Status.ValueString()
-	subscriptions := getSubscriptions(model)
+	subscriptions := getSubscriptions(ctx, model)
 	request.Webhook.Subscriptions = &subscriptions
 
 	return &request, nil
 }
 
-func setSigningSecret(model *WebhookModel, request *zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody) {
+func setSigningSecret(ctx context.Context, model *WebhookModel, request *zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody) {
 	if !model.Webhook.SigningSecret.IsNull() && !model.Webhook.SigningSecret.IsUnknown() {
 		request.Webhook.SigningSecret = &zendesk_webhook_api.SigningSecret{}
 		algorithm := model.Webhook.SigningSecret.Attributes()["algorithm"]
 		if !algorithm.IsNull() {
-			request.Webhook.SigningSecret.Algorithm = algorithm.(types.String).ValueStringPointer()
+			algorithmString, ok := algorithm.(types.String)
+			if !ok {
+				panic("unexpected type of algorithm")
+			}
+			request.Webhook.SigningSecret.Algorithm = algorithmString.ValueStringPointer()
 		}
 
 		secret := model.Webhook.SigningSecret.Attributes()["secret"]
 		if !secret.IsNull() {
-			request.Webhook.SigningSecret.Secret = secret.(types.String).ValueStringPointer()
+			secretString, ok := secret.(types.String)
+			if !ok {
+				panic("unexpected type of secret")
+			}
+			request.Webhook.SigningSecret.Secret = secretString.ValueStringPointer()
 		}
 	}
 }
@@ -190,19 +198,15 @@ func setExternalSource(ctx context.Context, model *WebhookModel, request *zendes
 	return nil
 }
 
-func getSubscriptions(model *WebhookModel) []string {
+func getSubscriptions(ctx context.Context, model *WebhookModel) []string {
 	subscriptions := make([]string, 0)
-	for _, value := range model.Webhook.Subscriptions.Elements() {
-		subscriptions = append(subscriptions, value.(types.String).ValueString())
-	}
+	model.Webhook.Subscriptions.ElementsAs(ctx, &subscriptions, true)
 	return subscriptions
 }
 
-func getCustomHeaders(model *WebhookModel) map[string]string {
+func getCustomHeaders(ctx context.Context, model *WebhookModel) map[string]string {
 	customHeaders := make(map[string]string)
-	for key, value := range model.Webhook.CustomHeaders.Elements() {
-		customHeaders[key] = value.(types.String).ValueString()
-	}
+	model.Webhook.CustomHeaders.ElementsAs(ctx, &customHeaders, true)
 	return customHeaders
 }
 
@@ -311,12 +315,13 @@ func mapAuthenticationFromApiResponse(ctx context.Context, webhookWithoutSensiti
 		return &nullObject, nil
 	}
 
-	authDataMapped, diags := mapAuthData(webhookWithoutSensitive)
+	authDataMapped := mapAuthData(webhookWithoutSensitive)
+
+	authData, diags := authDataMapped.ToObjectValue(ctx)
 	if diags.HasError() {
 		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
 		return nil, diags
 	}
-	authData, diags := authDataMapped.ToObjectValue(ctx)
 	auth := AuthenticationValue{
 		AddPosition:        stringValOrUnknown(webhookWithoutSensitive.Authentication.AddPosition),
 		Data:               authData,
@@ -326,11 +331,11 @@ func mapAuthenticationFromApiResponse(ctx context.Context, webhookWithoutSensiti
 	return &auth, nil
 }
 
-func mapAuthData(webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive) (*DataValue, diag.Diagnostics) {
+func mapAuthData(webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive) *DataValue {
 
 	if webhookWithoutSensitive.Authentication.Data == nil {
 		nullObjectData := NewDataValueNull()
-		return &nullObjectData, nil
+		return &nullObjectData
 	}
 
 	username := webhookWithoutSensitive.Authentication.Data.Username
@@ -341,7 +346,7 @@ func mapAuthData(webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSens
 		Username: stringValOrUnknown(username),
 	}
 
-	return &authData, nil
+	return &authData
 }
 
 func stringValOrUnknown(value *string) basetypes.StringValue {
