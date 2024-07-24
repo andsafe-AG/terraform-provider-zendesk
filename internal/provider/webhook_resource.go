@@ -80,22 +80,38 @@ func (r *webhookResource) ImportState(ctx context.Context, request resource.Impo
 }
 
 func (r *webhookResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data resource_webhook.WebhookModel
+	var planModel resource_webhook.WebhookModel
 
 	// Read Terraform plan data into the model
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planModel)...)
 
 	if resp.Diagnostics.HasError() {
+		tflog.Error(ctx, "Error reading Terraform plan data into the model: ", map[string]any{"error": resp.Diagnostics.Errors()})
 		return
 	}
 
-	// Create API call logic
+	tflog.Debug(ctx, "Create webhook resource with id: "+fmt.Sprintf("%+v", planModel.WebhookId))
+	webhookMapper := resource_webhook.NewWebhookMapper()
+	requestBody, diags := webhookMapper.MapToRequestBody(ctx, &planModel)
+	if diags != nil && diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
 
-	// Example data value setting
-	//TODO data.Id = types.StringValue("example-id")
+	createResponse, err := r.client.GetClient().CreateOrCloneWebhookWithResponse(ctx, nil, *requestBody, nil)
+	if err != nil {
+		tflog.Error(ctx, "Error creating webhook data from the API: ", map[string]interface{}{"error": err})
+		resp.Diagnostics.AddError("Error creating webhook data from the API", err.Error())
+		return
+	}
 
+	diags2 := webhookMapper.PutCreateResponseToStateModel(ctx, createResponse, &planModel)
+	if diags2 != nil && diags2.HasError() {
+		resp.Diagnostics.Append(diags2...)
+		return
+	}
 	// Save data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &planModel)...)
 }
 
 func (r *webhookResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
