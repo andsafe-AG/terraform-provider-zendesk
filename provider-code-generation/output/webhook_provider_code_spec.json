@@ -252,10 +252,7 @@
 											{
 												"name": "add_position",
 												"string": {
-													"computed_optional_required": "required",
-													"default": {
-														"static": "header"
-													}
+													"computed_optional_required": "required"
 												}
 											},
 											{
@@ -365,10 +362,7 @@
 								{
 									"name": "request_format",
 									"string": {
-										"computed_optional_required": "required",
-										"default": {
-											"static": "json"
-										}
+										"computed_optional_required": "required"
 									}
 								},
 								{

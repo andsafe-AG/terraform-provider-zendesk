@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
@@ -25,7 +24,6 @@ func WebhookResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"add_position": schema.StringAttribute{
 								Required: true,
-								Default:  stringdefault.StaticString("header"),
 							},
 							"data": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
@@ -122,7 +120,6 @@ func WebhookResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"request_format": schema.StringAttribute{
 						Required: true,
-						Default:  stringdefault.StaticString("json"),
 					},
 					"signing_secret": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
