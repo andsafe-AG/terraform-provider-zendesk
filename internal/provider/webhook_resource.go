@@ -35,7 +35,7 @@ func (r *webhookResource) Configure(ctx context.Context, request resource.Config
 		return
 	}
 
-	providerData, ok := request.ProviderData.(*zendeskProviderData)
+	providerData, ok := request.ProviderData.(zendeskProviderData)
 
 	if !ok {
 		response.Diagnostics.AddError(

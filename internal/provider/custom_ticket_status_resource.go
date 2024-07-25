@@ -95,7 +95,7 @@ func (r *customStatusResource) Configure(ctx context.Context, request resource.C
 		return
 	}
 
-	providerData, ok := request.ProviderData.(*zendeskProviderData)
+	providerData, ok := request.ProviderData.(zendeskProviderData)
 
 	if !ok {
 		response.Diagnostics.AddError(
