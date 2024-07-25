@@ -108,10 +108,15 @@ func TestWebhookMapper_MapToUpdateRequestBody(t *testing.T) {
 				r: getCreateWebhookModel()},
 			want:            getUpdateRequestBody(),
 			wantDiagnostics: nil},
-		{name: "some attributes filled",
+		{name: "Authentication attributes filled",
 			args: args{ctx: context.Background(),
 				r: getUpdateWebhookModelOnlyAuthenticationAttributes()},
 			want:            getUpdateRequestBodyOnlyAuthenticationAttributes(),
+			wantDiagnostics: nil},
+		{name: "Endpoint attributes filled",
+			args: args{ctx: context.Background(),
+				r: getUpdateWebhookModelOnlyEndpointAttributes()},
+			want:            getUpdateRequestBodyOnlyEndpointAttributes(),
 			wantDiagnostics: nil},
 	}
 	for _, tt := range tests {
@@ -144,6 +149,17 @@ func getUpdateRequestBodyOnlyAuthenticationAttributes() zendesk_webhook_api.Upda
 	}
 }
 
+func getUpdateRequestBodyOnlyEndpointAttributes() zendesk_webhook_api.UpdateWebhookJSONRequestBody {
+
+	return zendesk_webhook_api.UpdateWebhookJSONRequestBody{
+		Webhook: &zendesk_webhook_api.WebhookWithSensitiveData{
+			Endpoint:      "https://example.com",
+			HttpMethod:    "GET",
+			RequestFormat: "json",
+		},
+	}
+}
+
 func getUpdateRequestBody() zendesk_webhook_api.UpdateWebhookJSONRequestBody {
 	return zendesk_webhook_api.UpdateWebhookJSONRequestBody{
 		Webhook: createRequestBody200().Webhook,
@@ -163,6 +179,14 @@ func getUpdateWebhookModelOnlyAuthenticationAttributes() *WebhookModel {
 
 	return &model
 }
+func getUpdateWebhookModelOnlyEndpointAttributes() *WebhookModel {
+	model := WebhookModel{}
+	model.Webhook.Endpoint = types.StringValue("https://example.com")
+	model.Webhook.HttpMethod = types.StringValue("GET")
+	model.Webhook.RequestFormat = types.StringValue("json")
+	return &model
+}
+
 func getCreateWebhookModel() *WebhookModel {
 	model := WebhookModel{}
 	auth := NewAuthenticationValueNull()
