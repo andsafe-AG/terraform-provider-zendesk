@@ -1255,39 +1255,7 @@ type ListWebhooksWrap struct {
 			BeforeCursor *string `json:"before_cursor,omitempty"`
 			HasMore      *string `json:"has_more,omitempty"`
 		} `json:"meta,omitempty"`
-		Webhooks *[]struct {
-			Authentication *struct {
-				AddPosition *string `json:"add_position,omitempty"`
-				Data        *struct {
-					Username *string `json:"username,omitempty"`
-				} `json:"data,omitempty"`
-				Type *string `json:"type,omitempty"`
-			} `json:"authentication,omitempty"`
-			CreatedAt      *string            `json:"created_at,omitempty"`
-			CreatedBy      *string            `json:"created_by,omitempty"`
-			CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
-			Description    *string            `json:"description,omitempty"`
-			Endpoint       *string            `json:"endpoint,omitempty"`
-			ExternalSource *struct {
-				Data *struct {
-					AppId          *string `json:"app_id,omitempty"`
-					InstallationId *string `json:"installation_id,omitempty"`
-				} `json:"data,omitempty"`
-				Type *string `json:"type,omitempty"`
-			} `json:"external_source,omitempty"`
-			HttpMethod    *string `json:"http_method,omitempty"`
-			Id            *string `json:"id,omitempty"`
-			Name          *string `json:"name,omitempty"`
-			RequestFormat *string `json:"request_format,omitempty"`
-			SigningSecret *struct {
-				Algorithm *string `json:"algorithm,omitempty"`
-				Secret    *string `json:"secret,omitempty"`
-			} `json:"signing_secret,omitempty"`
-			Status        *string   `json:"status,omitempty"`
-			Subscriptions *[]string `json:"subscriptions,omitempty"`
-			UpdatedAt     *string   `json:"updated_at,omitempty"`
-			UpdatedBy     *string   `json:"updated_by,omitempty"`
-		} `json:"webhooks,omitempty"`
+		Webhooks *[]WebhookWithoutSensitive `json:"webhooks,omitempty"`
 	}
 }
 
@@ -1967,39 +1935,7 @@ func ParseListWebhooksWrap(rsp *http.Response) (*ListWebhooksWrap, error) {
 				BeforeCursor *string `json:"before_cursor,omitempty"`
 				HasMore      *string `json:"has_more,omitempty"`
 			} `json:"meta,omitempty"`
-			Webhooks *[]struct {
-				Authentication *struct {
-					AddPosition *string `json:"add_position,omitempty"`
-					Data        *struct {
-						Username *string `json:"username,omitempty"`
-					} `json:"data,omitempty"`
-					Type *string `json:"type,omitempty"`
-				} `json:"authentication,omitempty"`
-				CreatedAt      *string            `json:"created_at,omitempty"`
-				CreatedBy      *string            `json:"created_by,omitempty"`
-				CustomHeaders  *map[string]string `json:"custom_headers,omitempty"`
-				Description    *string            `json:"description,omitempty"`
-				Endpoint       *string            `json:"endpoint,omitempty"`
-				ExternalSource *struct {
-					Data *struct {
-						AppId          *string `json:"app_id,omitempty"`
-						InstallationId *string `json:"installation_id,omitempty"`
-					} `json:"data,omitempty"`
-					Type *string `json:"type,omitempty"`
-				} `json:"external_source,omitempty"`
-				HttpMethod    *string `json:"http_method,omitempty"`
-				Id            *string `json:"id,omitempty"`
-				Name          *string `json:"name,omitempty"`
-				RequestFormat *string `json:"request_format,omitempty"`
-				SigningSecret *struct {
-					Algorithm *string `json:"algorithm,omitempty"`
-					Secret    *string `json:"secret,omitempty"`
-				} `json:"signing_secret,omitempty"`
-				Status        *string   `json:"status,omitempty"`
-				Subscriptions *[]string `json:"subscriptions,omitempty"`
-				UpdatedAt     *string   `json:"updated_at,omitempty"`
-				UpdatedBy     *string   `json:"updated_by,omitempty"`
-			} `json:"webhooks,omitempty"`
+			Webhooks *[]WebhookWithoutSensitive `json:"webhooks,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err

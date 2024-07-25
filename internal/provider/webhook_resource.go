@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"strconv"
 	"terraform-provider-zendesk/internal/resource_webhook"
@@ -21,10 +22,6 @@ func NewWebhookResource() resource.Resource {
 type webhookResource struct {
 	client *zendesk_webhook_api.WebhookApi
 }
-
-/*type webhookResourceModel struct {
-	Id types.String `tfsdk:"id"`
-}*/
 
 func (r *webhookResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_webhook"
@@ -46,7 +43,6 @@ func (r *webhookResource) Configure(ctx context.Context, request resource.Config
 			fmt.Sprintf("Expected *zendeskProviderData, got: %T. Please report this issue to the provider developers.",
 				request.ProviderData),
 		)
-
 		return
 	}
 
@@ -65,17 +61,57 @@ func (r *webhookResource) ImportState(ctx context.Context, request resource.Impo
 	id := request.ID
 	tflog.Debug(ctx, "request.id: "+id)
 
-	idInt, intParsingError := strconv.ParseInt(id, 10, 64)
-	if intParsingError != nil {
-		// TODO - Add logic to handle the case where the id is not an integer
-	}
-	if idInt == 0 {
-		tflog.Error(ctx, "Could not find webhook with id or name: "+id)
-		response.Diagnostics.AddError("Could not find webhook with id or name: "+id, "")
+	webhookIdPath1 := path.Root("webhook_id")
+	webhookIdPath2 := path.Root("webhook").AtName("id")
+	var webhookIdOfMatching string
+
+	webhookShowResponse, err := r.client.GetClient().ShowWebhookWithResponse(ctx, id, nil)
+	if err != nil {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": err})
+		response.Diagnostics.AddError("Error reading webhook data from the API", err.Error())
 		return
 	}
 
-	//TODO - Add logic to retrieve the webhook by id
+	if webhookShowResponse.StatusCode() == 404 {
+
+		webhooks, err := r.client.GetClient().ListWebhooksWithResponse(ctx, nil, nil)
+		if err != nil {
+			tflog.Error(ctx, "Error reading webhooks list from the API: ", map[string]interface{}{"error": err})
+			response.Diagnostics.AddError("Error reading webhooks list from the API", err.Error())
+			return
+		}
+
+		if webhooks.StatusCode() != 200 {
+			tflog.Error(ctx, "Error reading webhooks list from the API: ", map[string]interface{}{"error": webhooks.Body})
+			response.Diagnostics.AddError("Error reading webhooks list from the API", fmt.Sprintf("%+v", webhooks.Body))
+			return
+		}
+
+		list := webhooks.JSON200.Webhooks
+
+		for _, webhook := range *list {
+			if webhook.Name == &id {
+				webhookIdOfMatching = *webhook.Id
+				break
+			}
+		}
+
+	} else if webhookShowResponse.StatusCode() != 200 {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": webhookShowResponse.Body})
+		response.Diagnostics.AddError("Error reading webhook data from the API", fmt.Sprintf("%+v", webhookShowResponse.Body))
+		return
+	} else {
+		webhookIdOfMatching = *webhookShowResponse.JSON200.Webhook.Id
+	}
+
+	response.Diagnostics.Append(response.State.SetAttribute(ctx, webhookIdPath1, webhookIdOfMatching)...)
+	response.Diagnostics.Append(response.State.SetAttribute(ctx, webhookIdPath2, webhookIdOfMatching)...)
+
+	if response.Diagnostics.HasError() {
+
+		tflog.Error(ctx, "Error importing state: ", map[string]any{"error": response.Diagnostics.Errors()})
+		return
+	}
 
 	tflog.Info(ctx, "ImportState custom status completed successfully")
 }
@@ -225,5 +261,33 @@ func (r *webhookResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
-	// Delete API call logic
+	response, err := r.client.GetClient().DeleteWebhookWithResponse(ctx, data.WebhookId.ValueString(), nil)
+	if err != nil {
+		resp.Diagnostics.AddError("Error deleting webhook data from the API", err.Error())
+		return
+	}
+	if response.StatusCode() == 404 {
+		resp.Diagnostics.AddError("Error deleting webhook data from the API", "Webhook not found")
+		return
+	}
+
+	if response.StatusCode() == 400 {
+		responseErrors, err := json.Marshal(response.JSON400.Errors)
+		if err != nil {
+			resp.Diagnostics.AddError("Error deleting webhook data from the API", "Bad Request: "+err.Error())
+			return
+		}
+		resp.Diagnostics.AddError("Error deleting webhook data from the API", "Bad Request: "+string(responseErrors))
+		return
+
+	}
+
+	if response.StatusCode() != 204 {
+		detail := "Unexpected response status code: " + strconv.Itoa(response.StatusCode()) + ", Response Body: " + fmt.Sprintf("%+v", response.Body)
+		resp.Diagnostics.AddError("Error deleting webhook data from the API", detail)
+		return
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Delete webhook with id %v completed successfully", data.WebhookId.ValueString()))
+
 }
