@@ -8,7 +8,7 @@ resource "zendesk_webhook" "my_webhook" {
     # Authentication is optional
     authentication = {
       # Currently supported only Basic Authentication and Bearer Token.
-      # The Zendesk API supports API Key, though not documented in the API Reference.
+      # API Key Authentication is not supported, since it is not documented in the API Reference.
       # basic_auth or bearer_token
       type = "basic_auth"
       # required
