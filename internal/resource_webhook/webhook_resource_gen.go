@@ -23,7 +23,7 @@ func WebhookResourceSchema(ctx context.Context) schema.Schema {
 					"authentication": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"add_position": schema.StringAttribute{
-								Required: true,
+								Optional: true,
 							},
 							"data": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
@@ -44,10 +44,10 @@ func WebhookResourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: DataValue{}.AttributeTypes(ctx),
 									},
 								},
-								Required: true,
+								Optional: true,
 							},
 							"type": schema.StringAttribute{
-								Required: true,
+								Optional: true,
 							},
 						},
 						CustomType: AuthenticationType{

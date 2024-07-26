@@ -252,13 +252,13 @@
 											{
 												"name": "add_position",
 												"string": {
-													"computed_optional_required": "required"
+													"computed_optional_required": "optional"
 												}
 											},
 											{
 												"name": "data",
 												"single_nested": {
-													"computed_optional_required": "required",
+													"computed_optional_required": "optional",
 													"attributes": [
 														{
 															"name": "password",
@@ -286,7 +286,7 @@
 											{
 												"name": "type",
 												"string": {
-													"computed_optional_required": "required"
+													"computed_optional_required": "optional"
 												}
 											}
 										]
