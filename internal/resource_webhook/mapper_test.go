@@ -86,8 +86,7 @@ func TestWebhookMapper_PutCreateResponseToStateModel(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			we := &WebhookMapper{}
-
-			diags := we.UpdateAttributesWithCreateResponse(nil, tt.args.showWebhookResponse, tt.args.webhookState)
+			diags := we.UpdateAttributesWithCreateResponse(context.Background(), tt.args.showWebhookResponse, tt.args.webhookState)
 			assert.Equal(t, false, diags.HasError())
 			tt.assertFunction(t, tt.args.webhookState)
 
@@ -371,8 +370,10 @@ func modelForCreateResponse200AllAttributes(t *testing.T, model *WebhookModel) {
 
 	assert.Equal(t, "\"header\"", model.Webhook.Authentication.Attributes()["add_position"].String())
 	assert.Equal(t, "\"basic_auth\"", model.Webhook.Authentication.Attributes()["type"].String())
-	assert.Equal(t, "\"test-user\"", model.Webhook.Authentication.Attributes()["data"].(types.Object).Attributes()["username"].String())
-	assert.Equal(t, "\"test-word\"", model.Webhook.Authentication.Attributes()["data"].(types.Object).Attributes()["password"].String())
+	dataObj, ok := model.Webhook.Authentication.Attributes()["data"].(types.Object)
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "\"test-user\"", dataObj.Attributes()["username"].String())
+	assert.Equal(t, "\"test-word\"", dataObj.Attributes()["password"].String())
 
 }
 func modelForResponse200AllNonSensitiveAttributes(t *testing.T, model *WebhookModel) {
@@ -403,8 +404,11 @@ func modelForResponse200AllNonSensitiveAttributes(t *testing.T, model *WebhookMo
 
 	assert.Equal(t, "\"header\"", model.Webhook.Authentication.Attributes()["add_position"].String())
 	assert.Equal(t, "\"basic_auth\"", model.Webhook.Authentication.Attributes()["type"].String())
-	assert.Equal(t, "\"test-user\"", model.Webhook.Authentication.Attributes()["data"].(types.Object).Attributes()["username"].String())
-	assert.Equal(t, true, model.Webhook.Authentication.Attributes()["data"].(types.Object).Attributes()["password"].IsNull())
+
+	object, ok := model.Webhook.Authentication.Attributes()["data"].(types.Object)
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "\"test-user\"", object.Attributes()["username"].String())
+	assert.Equal(t, true, object.Attributes()["password"].IsNull())
 
 }
 
