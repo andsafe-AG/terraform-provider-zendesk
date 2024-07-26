@@ -1,0 +1,449 @@
+{
+	"datasources": [
+		{
+			"name": "webhook",
+			"schema": {
+				"attributes": [
+					{
+						"name": "webhook_id",
+						"string": {
+							"computed_optional_required": "required",
+							"description": "(Required) Webhook id"
+						}
+					},
+					{
+						"name": "webhook",
+						"single_nested": {
+							"computed_optional_required": "computed",
+							"attributes": [
+								{
+									"name": "authentication",
+									"single_nested": {
+										"computed_optional_required": "computed",
+										"attributes": [
+											{
+												"name": "add_position",
+												"string": {
+													"computed_optional_required": "computed"
+												}
+											},
+											{
+												"name": "data",
+												"single_nested": {
+													"computed_optional_required": "computed",
+													"attributes": [
+														{
+															"name": "username",
+															"string": {
+																"computed_optional_required": "computed"
+															}
+														}
+													]
+												}
+											},
+											{
+												"name": "type",
+												"string": {
+													"computed_optional_required": "computed"
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "created_at",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "created_by",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "custom_headers",
+									"map": {
+										"computed_optional_required": "computed",
+										"element_type": {
+											"string": {}
+										}
+									}
+								},
+								{
+									"name": "description",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "endpoint",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "external_source",
+									"single_nested": {
+										"computed_optional_required": "computed",
+										"attributes": [
+											{
+												"name": "external_source_data",
+												"single_nested": {
+													"computed_optional_required": "computed",
+													"attributes": [
+														{
+															"name": "app_id",
+															"string": {
+																"computed_optional_required": "computed"
+															}
+														},
+														{
+															"name": "installation_id",
+															"string": {
+																"computed_optional_required": "computed"
+															}
+														}
+													]
+												}
+											},
+											{
+												"name": "type",
+												"string": {
+													"computed_optional_required": "computed"
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "http_method",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "id",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "name",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "request_format",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "signing_secret",
+									"single_nested": {
+										"computed_optional_required": "computed",
+										"attributes": [
+											{
+												"name": "algorithm",
+												"string": {
+													"computed_optional_required": "computed"
+												}
+											},
+											{
+												"name": "secret",
+												"string": {
+													"computed_optional_required": "computed",
+													"sensitive": true
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "status",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "subscriptions",
+									"list": {
+										"computed_optional_required": "computed",
+										"element_type": {
+											"string": {}
+										}
+									}
+								},
+								{
+									"name": "updated_at",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "updated_by",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								}
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "webhook_signing_secret",
+			"schema": {
+				"attributes": [
+					{
+						"name": "webhook_id",
+						"string": {
+							"computed_optional_required": "required",
+							"description": "(Required) Webhook id"
+						}
+					},
+					{
+						"name": "signing_secret",
+						"single_nested": {
+							"computed_optional_required": "computed",
+							"attributes": [
+								{
+									"name": "algorithm",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "secret",
+									"string": {
+										"computed_optional_required": "computed",
+										"sensitive": true
+									}
+								}
+							]
+						}
+					}
+				]
+			}
+		}
+	],
+	"provider": {
+		"name": "zendesk"
+	},
+	"resources": [
+		{
+			"name": "webhook",
+			"schema": {
+				"attributes": [
+					{
+						"name": "webhook",
+						"single_nested": {
+							"computed_optional_required": "required",
+							"attributes": [
+								{
+									"name": "authentication",
+									"single_nested": {
+										"computed_optional_required": "optional",
+										"attributes": [
+											{
+												"name": "add_position",
+												"string": {
+													"computed_optional_required": "optional"
+												}
+											},
+											{
+												"name": "data",
+												"single_nested": {
+													"computed_optional_required": "optional",
+													"attributes": [
+														{
+															"name": "password",
+															"string": {
+																"computed_optional_required": "optional",
+																"sensitive": true
+															}
+														},
+														{
+															"name": "token",
+															"string": {
+																"computed_optional_required": "optional",
+																"sensitive": true
+															}
+														},
+														{
+															"name": "username",
+															"string": {
+																"computed_optional_required": "optional"
+															}
+														}
+													]
+												}
+											},
+											{
+												"name": "type",
+												"string": {
+													"computed_optional_required": "optional"
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "custom_headers",
+									"map": {
+										"computed_optional_required": "computed_optional",
+										"element_type": {
+											"string": {}
+										}
+									}
+								},
+								{
+									"name": "description",
+									"string": {
+										"computed_optional_required": "computed_optional"
+									}
+								},
+								{
+									"name": "endpoint",
+									"string": {
+										"computed_optional_required": "required"
+									}
+								},
+								{
+									"name": "external_source",
+									"single_nested": {
+										"computed_optional_required": "computed_optional",
+										"attributes": [
+											{
+												"name": "external_source_data",
+												"single_nested": {
+													"computed_optional_required": "computed_optional",
+													"attributes": [
+														{
+															"name": "app_id",
+															"string": {
+																"computed_optional_required": "computed_optional"
+															}
+														},
+														{
+															"name": "installation_id",
+															"string": {
+																"computed_optional_required": "computed_optional"
+															}
+														}
+													]
+												}
+											},
+											{
+												"name": "type",
+												"string": {
+													"computed_optional_required": "computed_optional"
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "http_method",
+									"string": {
+										"computed_optional_required": "required"
+									}
+								},
+								{
+									"name": "name",
+									"string": {
+										"computed_optional_required": "required"
+									}
+								},
+								{
+									"name": "request_format",
+									"string": {
+										"computed_optional_required": "required"
+									}
+								},
+								{
+									"name": "signing_secret",
+									"single_nested": {
+										"computed_optional_required": "computed",
+										"attributes": [
+											{
+												"name": "algorithm",
+												"string": {
+													"computed_optional_required": "computed"
+												}
+											},
+											{
+												"name": "secret",
+												"string": {
+													"computed_optional_required": "computed",
+													"sensitive": true
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "status",
+									"string": {
+										"computed_optional_required": "required"
+									}
+								},
+								{
+									"name": "subscriptions",
+									"list": {
+										"computed_optional_required": "computed_optional",
+										"element_type": {
+											"string": {}
+										}
+									}
+								},
+								{
+									"name": "created_at",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "created_by",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "id",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "updated_at",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								},
+								{
+									"name": "updated_by",
+									"string": {
+										"computed_optional_required": "computed"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "webhook_id",
+						"string": {
+							"computed_optional_required": "computed",
+							"description": "(Required) Webhook id"
+						}
+					}
+				]
+			}
+		}
+	],
+	"version": "0.1"
+}

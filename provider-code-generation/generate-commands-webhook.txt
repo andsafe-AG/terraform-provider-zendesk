@@ -1,0 +1,6 @@
+1. Generate Provider Specifications
+tfplugingen-openapi generate --config gen-config-webhook.yml --output output/webhook_provider_code_spec.json webhook-openapi.yml
+
+2. Generate Provider Code
+
+tfplugingen-framework generate all --input output/webhook_provider_code_spec.json --output output/zendesk_provider_generated

@@ -1,0 +1,2690 @@
+openapi: 3.0.3
+info:
+  title: Webhook API
+  description: >-
+    The Webhook API allows customers to manage their webhooks and enable
+    subscriptions to receive notifications about zendesk events.
+  version: 1.0.0
+  contact: {}
+servers:
+  - url: /
+paths:
+  /api/v2/webhooks/{webhook_id}/invocations/{invocation_id}/attempts:
+    get:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - '{webhook_id}'
+        - invocations
+        - '{invocation_id}'
+        - attempts
+      summary: List Webhook Invocation Attempts
+      description: |-
+        Returns the invocation attempts for the specified webhook.
+
+        #### Allowed for
+        - Admins
+      operationId: listWebhookInvocationAttempts
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attempts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        completed_at:
+                          type: string
+                          example: <dateTime>
+                        id:
+                          type: string
+                          example: <string>
+                        invocation_id:
+                          type: string
+                          example: <string>
+                        request:
+                          type: object
+                          properties:
+                            headers:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  key:
+                                    type: string
+                                    example: <string>
+                                  value:
+                                    type: string
+                                    example: <string>
+                              example:
+                                - key: <string>
+                                  value: <string>
+                                - key: <string>
+                                  value: <string>
+                            payload:
+                              type: object
+                              properties:
+                                dolorcf:
+                                  type: string
+                                  example: <string>
+                                euf:
+                                  type: string
+                                  example: <string>
+                                ex_5:
+                                  type: string
+                                  example: <string>
+                                in9f2:
+                                  type: string
+                                  example: <string>
+                                ullamcoce8:
+                                  type: string
+                                  example: <string>
+                                ut_1f:
+                                  type: string
+                                  example: <string>
+                        response:
+                          type: object
+                          properties:
+                            headers:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  key:
+                                    type: string
+                                    example: <string>
+                                  value:
+                                    type: string
+                                    example: <string>
+                              example:
+                                - key: <string>
+                                  value: <string>
+                                - key: <string>
+                                  value: <string>
+                            payload:
+                              type: object
+                              properties:
+                                aliqua_46:
+                                  type: string
+                                  example: <string>
+                                cupidatat_2:
+                                  type: string
+                                  example: <string>
+                                dolore_b2:
+                                  type: string
+                                  example: <string>
+                                tempor_0b5:
+                                  type: string
+                                  example: <string>
+                        status:
+                          type: string
+                          example: unknown
+                        status_code:
+                          type: string
+                          example: <integer>
+                    example:
+                      - completed_at: <dateTime>
+                        id: <string>
+                        invocation_id: <string>
+                        request:
+                          headers:
+                            - key: <string>
+                              value: <string>
+                            - key: <string>
+                              value: <string>
+                          payload:
+                            dolorcf: <string>
+                            in9f2: <string>
+                            ut_1f: <string>
+                        response:
+                          headers:
+                            - key: <string>
+                              value: <string>
+                            - key: <string>
+                              value: <string>
+                          payload:
+                            cupidatat_2: <string>
+                            dolore_b2: <string>
+                            tempor_0b5: <string>
+                        status: unknown
+                        status_code: <integer>
+                      - completed_at: <dateTime>
+                        id: <string>
+                        invocation_id: <string>
+                        request:
+                          headers:
+                            - key: <string>
+                              value: <string>
+                            - key: <string>
+                              value: <string>
+                          payload:
+                            euf: <string>
+                            ex_5: <string>
+                            ullamcoce8: <string>
+                        response:
+                          headers:
+                            - key: <string>
+                              value: <string>
+                            - key: <string>
+                              value: <string>
+                          payload:
+                            aliqua_46: <string>
+                        status: success
+                        status_code: <integer>
+              examples:
+                Ok:
+                  value:
+                    attempts:
+                      - completed_at: <dateTime>
+                        id: <string>
+                        invocation_id: <string>
+                        request:
+                          headers:
+                            - key: <string>
+                              value: <string>
+                            - key: <string>
+                              value: <string>
+                          payload:
+                            dolorcf: <string>
+                            in9f2: <string>
+                            ut_1f: <string>
+                        response:
+                          headers:
+                            - key: <string>
+                              value: <string>
+                            - key: <string>
+                              value: <string>
+                          payload:
+                            cupidatat_2: <string>
+                            dolore_b2: <string>
+                            tempor_0b5: <string>
+                        status: unknown
+                        status_code: <integer>
+                      - completed_at: <dateTime>
+                        id: <string>
+                        invocation_id: <string>
+                        request:
+                          headers:
+                            - key: <string>
+                              value: <string>
+                            - key: <string>
+                              value: <string>
+                          payload:
+                            euf: <string>
+                            ex_5: <string>
+                            ullamcoce8: <string>
+                        response:
+                          headers:
+                            - key: <string>
+                              value: <string>
+                            - key: <string>
+                              value: <string>
+                          payload:
+                            aliqua_46: <string>
+                        status: success
+                        status_code: <integer>
+    parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: <string>
+        description: (Required) Webhook id
+      - name: invocation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: <string>
+        description: (Required) Webhook invocation id
+  /api/v2/webhooks/{webhook_id}/invocations:
+    get:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - '{webhook_id}'
+        - invocations
+      summary: List Webhook Invocations
+      description: |-
+        Returns up to 7 days of invocations for a webhook.
+
+        #### Allowed for
+        - Admins
+      operationId: listWebhookInvocations
+      parameters:
+        - name: page[before]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Includes the previous page of invocations with defined size
+        - name: page[after]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Includes the next page of invocations with defined size
+        - name: page[size]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Defines a specific number of invocations per page
+        - name: sort
+          in: query
+          schema:
+            type: string
+            example: '-latest_completed_at'
+          description: Defines a invocation attribute to sort invocations.
+        - name: filter[status]
+          in: query
+          schema:
+            type: string
+            example: server error
+          description: Filters invocations by invocation status.
+        - name: filter[from_ts]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Filters invocations by from timestamp. Use ISO 8601 UTC format
+        - name: filter[to_ts]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Filters invocations by timestamp. Use ISO 8601 UTC format
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invocations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: <string>
+                        latest_completed_at:
+                          type: string
+                          example: <dateTime>
+                        status:
+                          type: string
+                          example: success
+                        status_code:
+                          type: string
+                          example: <integer>
+                    example:
+                      - id: <string>
+                        latest_completed_at: <dateTime>
+                        status: success
+                        status_code: <integer>
+                      - id: <string>
+                        latest_completed_at: <dateTime>
+                        status: server error
+                        status_code: <integer>
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type: string
+                        example: <string>
+                      prev:
+                        type: string
+                        example: <string>
+                  meta:
+                    type: object
+                    properties:
+                      after_cursor:
+                        type: string
+                        example: <string>
+                      before_cursor:
+                        type: string
+                        example: <string>
+                      has_more:
+                        type: string
+                        example: <boolean>
+              examples:
+                Ok:
+                  value:
+                    invocations:
+                      - id: <string>
+                        latest_completed_at: <dateTime>
+                        status: success
+                        status_code: <integer>
+                      - id: <string>
+                        latest_completed_at: <dateTime>
+                        status: server error
+                        status_code: <integer>
+                    links:
+                      next: <string>
+                      prev: <string>
+                    meta:
+                      after_cursor: <string>
+                      before_cursor: <string>
+                      has_more: <boolean>
+    parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: <string>
+        description: (Required) Webhook id
+  /api/v2/webhooks/{webhook_id}/signing_secret:
+    get:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - '{webhook_id}'
+        - signing_secret
+      summary: Show Webhook Signing Secret
+      description: >-
+        Returns the webhook's signing secret. Note that admins cannot reveal
+        secrets of webhooks created by Zendesk apps.
+
+
+        #### Allowed for
+
+        - Admins
+      operationId: showWebhookSigningSecret
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signing_secret:
+                    type: object
+                    properties:
+                      algorithm:
+                        type: string
+                        example: SHA256
+                      secret:
+                        type: string
+                        example: <string>
+              examples:
+                Ok:
+                  value:
+                    signing_secret:
+                      algorithm: SHA256
+                      secret: <string>
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Forbidden:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Not Found:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+    post:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - '{webhook_id}'
+        - signing_secret
+      summary: Reset Webhook Signing Secret
+      description: >-
+        Resets a signing secret for the specified webhook. Note that admins
+        cannot reset secrets of webhooks created by Zendesk apps.
+
+
+        #### Allowed for
+
+        - Admins
+      operationId: resetWebhookSigningSecret
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signing_secret:
+                    type: object
+                    properties:
+                      algorithm:
+                        type: string
+                        example: SHA256
+                      secret:
+                        type: string
+                        example: <string>
+              examples:
+                Created:
+                  value:
+                    signing_secret:
+                      algorithm: SHA256
+                      secret: <string>
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Forbidden:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Not Found:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+    parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: <string>
+        description: (Required) Webhook id
+  /api/v2/webhooks/{webhook_id}:
+    get:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - '{webhook_id}'
+      summary: Show Webhook
+      description: |-
+        Returns the specified webhook.
+
+        #### Allowed for
+        - Agents
+      operationId: showWebhook
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook:
+                    type: object
+                    properties:
+                      authentication:
+                        type: object
+                        properties:
+                          add_position:
+                            type: string
+                            example: header
+                          data:
+                            type: object
+                            properties:
+                              username:
+                                type: string
+                                example: <string>
+                          type:
+                            type: string
+                            example: basic_auth
+                      created_at:
+                        type: string
+                        example: <dateTime>
+                      created_by:
+                        type: string
+                        example: <string>
+                      custom_headers:
+                        type: object
+                        additionalProperties:
+                          type: string
+                          example:
+                            header-one: <string>
+                            header-two: <string>
+                      description:
+                        type: string
+                        example: <string>
+                      endpoint:
+                        type: string
+                        example: <string>
+                      external_source:
+                        type: object
+                        properties:
+                          data:
+                            type: object
+                            properties:
+                              app_id:
+                                type: string
+                                example: <integer>
+                              installation_id:
+                                type: string
+                                example: <integer>
+                          type:
+                            type: string
+                            example: zendesk_app
+                      http_method:
+                        type: string
+                        example: DELETE
+                      id:
+                        type: string
+                        example: <string>
+                      name:
+                        type: string
+                        example: <string>
+                      request_format:
+                        type: string
+                        example: xml
+                      signing_secret:
+                        type: object
+                        properties:
+                          algorithm:
+                            type: string
+                            example: SHA256
+                          secret:
+                            type: string
+                            example: <string>
+                      status:
+                        type: string
+                        example: active
+                      subscriptions:
+                        type: array
+                        items:
+                          type: string
+                          example: <string>
+                        example:
+                          - <string>
+                          - <string>
+                      updated_at:
+                        type: string
+                        example: <dateTime>
+                      updated_by:
+                        type: string
+                        example: <string>
+              examples:
+                Ok:
+                  value:
+                    webhook:
+                      authentication:
+                        add_position: header
+                        data:
+                          username: <string>
+                        type: basic_auth
+                      created_at: <dateTime>
+                      created_by: <string>
+                      custom_headers:
+                        header-one: <string>
+                      description: <string>
+                      endpoint: <string>
+                      external_source:
+                        data:
+                          app_id: <integer>
+                          installation_id: <integer>
+                        type: zendesk_app
+                      http_method: DELETE
+                      id: <string>
+                      name: <string>
+                      request_format: xml
+                      signing_secret:
+                        algorithm: SHA256
+                        secret: <string>
+                      status: active
+                      subscriptions:
+                        - <string>
+                        - <string>
+                      updated_at: <dateTime>
+                      updated_by: <string>
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Bad Request:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Not Found:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+    put:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - '{webhook_id}'
+      summary: Update Webhook
+      description: |-
+        Updates the specified webhook.
+
+        #### Allowed for
+        - Admins, with restrictions on certain actions
+
+          Admins cannot set `external_source` and `signing_secret` when updating a webhook.
+      operationId: updateWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                webhook:
+                  type: object
+                  properties:
+                    authentication:
+                      type: object
+                      properties:
+                        add_position:
+                          type: string
+                          example: header
+                        data:
+                          type: object
+                          properties:
+                            password:
+                              type: string
+                              example: <string>
+                            username:
+                              type: string
+                              example: <string>
+                        type:
+                          type: string
+                          example: bearer_token
+                    created_at:
+                      type: string
+                      example: <dateTime>
+                    created_by:
+                      type: string
+                      example: <string>
+                    custom_headers:
+                      type: object
+                      additionalProperties:
+                        type: string
+                        example:
+                          header-one: <string>
+                    description:
+                      type: string
+                      example: <string>
+                    endpoint:
+                      type: string
+                      example: <string>
+                    external_source:
+                      type: object
+                      properties:
+                        data:
+                          type: object
+                          properties:
+                            app_id:
+                              type: string
+                              example: <integer>
+                            installation_id:
+                              type: string
+                              example: <integer>
+                        type:
+                          type: string
+                          example: zendesk_app
+                    http_method:
+                      type: string
+                      example: POST
+                    id:
+                      type: string
+                      example: <string>
+                    name:
+                      type: string
+                      example: <string>
+                    request_format:
+                      type: string
+                      example: xml
+                    signing_secret:
+                      type: object
+                      properties:
+                        algorithm:
+                          type: string
+                          example: SHA256
+                        secret:
+                          type: string
+                          example: <string>
+                    status:
+                      type: string
+                      example: inactive
+                    subscriptions:
+                      type: array
+                      items:
+                        type: string
+                        example: <string>
+                      example:
+                        - <string>
+                        - <string>
+                    updated_at:
+                      type: string
+                      example: <dateTime>
+                    updated_by:
+                      type: string
+                      example: <string>
+            example:
+              webhook:
+                authentication:
+                  add_position: header
+                  data:
+                    password: <string>
+                    username: <string>
+                  type: bearer_token
+                created_at: <dateTime>
+                created_by: <string>
+                custom_headers:
+                  header-one: <string>
+                description: <string>
+                endpoint: <string>
+                external_source:
+                  data:
+                    app_id: <integer>
+                    installation_id: <integer>
+                  type: zendesk_app
+                http_method: POST
+                id: <string>
+                name: <string>
+                request_format: xml
+                signing_secret:
+                  algorithm: SHA256
+                  secret: <string>
+                status: inactive
+                subscriptions:
+                  - <string>
+                  - <string>
+                updated_at: <dateTime>
+                updated_by: <string>
+      responses:
+        '204':
+          description: No Content
+          content: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Bad Request:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Not Found:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+    delete:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - '{webhook_id}'
+      summary: Delete Webhook
+      description: |-
+        Deletes the specified webhook.
+
+        #### Allowed for
+        - Admins
+      operationId: deleteWebhook
+      responses:
+        '204':
+          description: No Content
+          content: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Bad Request:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Not Found:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+    patch:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - '{webhook_id}'
+      summary: Patch Webhook
+      description: |-
+        Use the `webhook_id` to update a webhook.
+
+        #### Allowed for
+        - Admins, with restrictions on certain actions
+
+          Admins cannot set `external_source` and `signing_secret` when patching a webhook.
+      operationId: patchWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                webhook:
+                  type: object
+                  properties:
+                    authentication:
+                      type: object
+                      properties:
+                        add_position:
+                          type: string
+                          example: header
+                        data:
+                          type: object
+                          properties:
+                            password:
+                              type: string
+                              example: <string>
+                            username:
+                              type: string
+                              example: <string>
+                        type:
+                          type: string
+                          example: bearer_token
+                    created_at:
+                      type: string
+                      example: <dateTime>
+                    created_by:
+                      type: string
+                      example: <string>
+                    custom_headers:
+                      type: object
+                      additionalProperties:
+                        type: string
+                        example:
+                          header-one: <string>
+                          header-two: <string>
+                    description:
+                      type: string
+                      example: <string>
+                    endpoint:
+                      type: string
+                      example: <string>
+                    external_source:
+                      type: object
+                      properties:
+                        data:
+                          type: object
+                          properties:
+                            app_id:
+                              type: string
+                              example: <integer>
+                            installation_id:
+                              type: string
+                              example: <integer>
+                        type:
+                          type: string
+                          example: zendesk_app
+                    http_method:
+                      type: string
+                      example: PATCH
+                    id:
+                      type: string
+                      example: <string>
+                    name:
+                      type: string
+                      example: <string>
+                    request_format:
+                      type: string
+                      example: xml
+                    signing_secret:
+                      type: object
+                      properties:
+                        algorithm:
+                          type: string
+                          example: SHA256
+                        secret:
+                          type: string
+                          example: <string>
+                    status:
+                      type: string
+                      example: inactive
+                    subscriptions:
+                      type: array
+                      items:
+                        type: string
+                        example: <string>
+                      example:
+                        - <string>
+                        - <string>
+                    updated_at:
+                      type: string
+                      example: <dateTime>
+                    updated_by:
+                      type: string
+                      example: <string>
+            example:
+              webhook:
+                authentication:
+                  add_position: header
+                  data:
+                    password: <string>
+                    username: <string>
+                  type: bearer_token
+                created_at: <dateTime>
+                created_by: <string>
+                custom_headers:
+                  header-one: <string>
+                  header-two: <string>
+                description: <string>
+                endpoint: <string>
+                external_source:
+                  data:
+                    app_id: <integer>
+                    installation_id: <integer>
+                  type: zendesk_app
+                http_method: PATCH
+                id: <string>
+                name: <string>
+                request_format: xml
+                signing_secret:
+                  algorithm: SHA256
+                  secret: <string>
+                status: inactive
+                subscriptions:
+                  - <string>
+                  - <string>
+                updated_at: <dateTime>
+                updated_by: <string>
+      responses:
+        '204':
+          description: No Content
+          content: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Bad Request:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Not Found:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+    parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: <string>
+        description: (Required) Webhook id
+  /api/v2/webhooks/test:
+    post:
+      tags:
+        - api
+        - v2
+        - webhooks
+        - test
+      summary: Test Webhook
+      description: >-
+        Tests a new or existing webhook.
+
+
+        When testing an existing webhook, the existing webhook data will be
+        attached automatically as part of the outbound test request. The data
+        includes the request format, http method, authentication method (only if
+        same type and add_position are attached), and signing secret. The
+        request payload data will overwrite existing webhook data in the
+        outbound test request.
+
+
+        #### Allowed for
+
+        - Admins
+      operationId: testWebhook
+      parameters:
+        - name: webhook_id
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: >-
+            The webhook to be tested. Only required for testing an existing
+            webhook.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request:
+                  type: object
+                  properties:
+                    custom_headers:
+                      type: object
+                      additionalProperties:
+                        type: string
+                        example:
+                          header-one: "new_value_one"
+                          header-two: "new_value_two"
+                    endpoint:
+                      type: string
+                      example: <string>
+                    http_method:
+                      type: string
+                      example: PUT
+                    payload:
+                      type: string
+                      example: <string>
+                    query_parameters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                            example: <string>
+                          value:
+                            type: string
+                            example: <string>
+                      example:
+                        - key: <string>
+                          value: <string>
+                        - key: <string>
+                          value: <string>
+                    request_format:
+                      type: string
+                      example: json
+            example:
+              request:
+                custom_headers:
+                  header-one: "new_value_one"
+                  header-two: "new_value_two"
+                endpoint: <string>
+                http_method: PUT
+                payload: <string>
+                query_parameters:
+                  - key: <string>
+                    value: <string>
+                  - key: <string>
+                    value: <string>
+                request_format: json
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: object
+                    properties:
+                      headers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                              example: <string>
+                            value:
+                              type: string
+                              example: <string>
+                        example:
+                          - key: <string>
+                            value: <string>
+                          - key: <string>
+                            value: <string>
+                      payload:
+                        type: string
+                        example: <string>
+                      status:
+                        type: string
+                        example: <integer>
+              examples:
+                Ok:
+                  value:
+                    response:
+                      headers:
+                        - key: <string>
+                          value: <string>
+                        - key: <string>
+                          value: <string>
+                      payload: <string>
+                      status: <integer>
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Bad Request:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+  /api/v2/webhooks:
+    get:
+      tags:
+        - api
+        - v2
+        - webhooks
+      summary: List Webhooks
+      description: |-
+        List webhooks.
+
+        #### Allowed for
+        - Agents
+      operationId: listWebhooks
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+            example: name
+          description: Defines the sorting criteria. Only supports name and status.
+        - name: filter[name_contains]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Filters the webhooks by a string in the name
+        - name: filter[status]
+          in: query
+          schema:
+            type: string
+            example: active
+          description: Filters the webhooks by webhook status
+        - name: page[before]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Includes the previous page of results with defined size
+        - name: page[after]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Includes the next page of results with defined size
+        - name: page[size]
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: Defines a specified number of results per page
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type: string
+                        example: <string>
+                      prev:
+                        type: string
+                        example: <string>
+                  meta:
+                    type: object
+                    properties:
+                      after_cursor:
+                        type: string
+                        example: <string>
+                      before_cursor:
+                        type: string
+                        example: <string>
+                      has_more:
+                        type: string
+                        example: <boolean>
+                  webhooks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        authentication:
+                          type: object
+                          properties:
+                            add_position:
+                              type: string
+                              example: header
+                            data:
+                              type: object
+                              properties:
+                                username:
+                                  type: string
+                                  example: <string>
+                            type:
+                              type: string
+                              example: basic_auth
+                        created_at:
+                          type: string
+                          example: <dateTime>
+                        created_by:
+                          type: string
+                          example: <string>
+                        custom_headers:
+                          type: object
+                          additionalProperties:
+                            type: string
+                            example:
+                              header-one: "new_value_one"
+                              header-two: "new_value_two"
+                        description:
+                          type: string
+                          example: <string>
+                        endpoint:
+                          type: string
+                          example: <string>
+                        external_source:
+                          type: object
+                          properties:
+                            data:
+                              type: object
+                              properties:
+                                app_id:
+                                  type: string
+                                  example: <integer>
+                                installation_id:
+                                  type: string
+                                  example: <integer>
+                            type:
+                              type: string
+                              example: zendesk_app
+                        http_method:
+                          type: string
+                          example: PATCH
+                        id:
+                          type: string
+                          example: <string>
+                        name:
+                          type: string
+                          example: <string>
+                        request_format:
+                          type: string
+                          example: xml
+                        signing_secret:
+                          type: object
+                          properties:
+                            algorithm:
+                              type: string
+                              example: SHA256
+                            secret:
+                              type: string
+                              example: <string>
+                        status:
+                          type: string
+                          example: active
+                        subscriptions:
+                          type: array
+                          items:
+                            type: string
+                            example: <string>
+                          example:
+                            - <string>
+                            - <string>
+                        updated_at:
+                          type: string
+                          example: <dateTime>
+                        updated_by:
+                          type: string
+                          example: <string>
+                    example:
+                      - authentication:
+                          add_position: header
+                          data:
+                            username: <string>
+                          type: basic_auth
+                        created_at: <dateTime>
+                        created_by: <string>
+                        custom_headers:
+                          header-one: "new_value_one"
+                        description: <string>
+                        endpoint: <string>
+                        external_source:
+                          data:
+                            app_id: <integer>
+                            installation_id: <integer>
+                          type: zendesk_app
+                        http_method: PATCH
+                        id: <string>
+                        name: <string>
+                        request_format: xml
+                        signing_secret:
+                          algorithm: SHA256
+                          secret: <string>
+                        status: active
+                        subscriptions:
+                          - <string>
+                          - <string>
+                        updated_at: <dateTime>
+                        updated_by: <string>
+                      - authentication:
+                          add_position: header
+                          data:
+                            username: <string>
+                          type: bearer_token
+                        created_at: <dateTime>
+                        created_by: <string>
+                        custom_headers:
+                          header-one: "new_value_one"
+                          header-two: "new_value_two"
+                          header-three: "new_value_three"
+                        description: <string>
+                        endpoint: <string>
+                        external_source:
+                          data:
+                            app_id: <integer>
+                            installation_id: <integer>
+                          type: zendesk_app
+                        http_method: POST
+                        id: <string>
+                        name: <string>
+                        request_format: xml
+                        signing_secret:
+                          algorithm: SHA256
+                          secret: <string>
+                        status: active
+                        subscriptions:
+                          - <string>
+                          - <string>
+                        updated_at: <dateTime>
+                        updated_by: <string>
+              examples:
+                Ok:
+                  value:
+                    links:
+                      next: <string>
+                      prev: <string>
+                    meta:
+                      after_cursor: <string>
+                      before_cursor: <string>
+                      has_more: <boolean>
+                    webhooks:
+                      - authentication:
+                          add_position: header
+                          data:
+                            username: <string>
+                          type: basic_auth
+                        created_at: <dateTime>
+                        created_by: <string>
+                        custom_headers:
+                          header-one: "new_value_one"
+                        description: <string>
+                        endpoint: <string>
+                        external_source:
+                          data:
+                            app_id: <integer>
+                            installation_id: <integer>
+                          type: zendesk_app
+                        http_method: PATCH
+                        id: <string>
+                        name: <string>
+                        request_format: xml
+                        signing_secret:
+                          algorithm: SHA256
+                          secret: <string>
+                        status: active
+                        subscriptions:
+                          - <string>
+                          - <string>
+                        updated_at: <dateTime>
+                        updated_by: <string>
+                      - authentication:
+                          add_position: header
+                          data:
+                            username: <string>
+                          type: bearer_token
+                        created_at: <dateTime>
+                        created_by: <string>
+                        custom_headers:
+                          header-one: "new_value_one"
+                          header-two: "new_value_two"
+                        description: <string>
+                        endpoint: <string>
+                        external_source:
+                          data:
+                            app_id: <integer>
+                            installation_id: <integer>
+                          type: zendesk_app
+                        http_method: POST
+                        id: <string>
+                        name: <string>
+                        request_format: xml
+                        signing_secret:
+                          algorithm: SHA256
+                          secret: <string>
+                        status: active
+                        subscriptions:
+                          - <string>
+                          - <string>
+                        updated_at: <dateTime>
+                        updated_by: <string>
+    post:
+      tags:
+        - api
+        - v2
+        - webhooks
+      summary: Create or Clone Webhook
+      description: >
+        Creates or clones a webhook. The `clone_webhook_id` query parameter is
+        only required when cloning a webhook.
+
+        A request body is only required when creating a webhook.
+
+
+        Note that admins cannot clone webhooks created by Zendesk apps.
+
+
+        #### Allowed for
+
+        - Admins, with restrictions on certain actions
+
+          Admins cannot set `external_source` and `signing_secret` when creating a webhook.
+
+        #### Webhooks for trial accounts
+
+
+        Zendesk trial accounts are limited to 10 webhooks. Attempts to exceed
+        this limit
+
+        return the following error:
+
+
+        ```http
+
+        Status 403 Forbidden
+
+
+        {
+          "errors": [
+            {
+              "code": "WebhookLimitExceeded",
+              "title": "Webhook Limit Exceeded",
+              "detail": "Account limit on number of webhooks has been reached"
+            }
+          ]
+        }
+
+        ```
+      operationId: createOrCloneWebhook
+      parameters:
+        - name: clone_webhook_id
+          in: query
+          schema:
+            type: string
+            example: <string>
+          description: id of the webhook to clone. Only required if cloning a webhook.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - webhook
+              properties:
+                webhook:
+                  type: object
+                  required: [ endpoint, http_method, name, request_format, status ]
+                  properties:
+                    authentication:
+                      type: object
+                      required: [ add_position, data, type ]
+                      properties:
+                        add_position:
+                          type: string
+                          example: header
+                        data:
+                          type: object
+                          properties:
+                            password:
+                              type: string
+                              example: <string>
+                            username:
+                              type: string
+                              example: <string>
+                            token:
+                              type: string
+                              example: <string>
+                        type:
+                          type: string
+                          example: bearer_token
+                    custom_headers:
+                      type: object
+                      additionalProperties:
+                        type: string
+                        example:
+                          header-one: "new_value_one"
+                          header-two: "new_value_two"
+                    description:
+                      type: string
+                      example: <string>
+                    endpoint:
+                      type: string
+                      example: <string>
+                    external_source:
+                      type: object
+                      properties:
+                        data:
+                          type: object
+                          properties:
+                            app_id:
+                              type: string
+                              example: <integer>
+                            installation_id:
+                              type: string
+                              example: <integer>
+                        type:
+                          type: string
+                          example: zendesk_app
+                    http_method:
+                      type: string
+                      example: PATCH
+                    name:
+                      type: string
+                      example: <string>
+                    request_format:
+                      type: string
+                      example: xml
+                    signing_secret:
+                      type: object
+                      properties:
+                        algorithm:
+                          type: string
+                          example: SHA256
+                        secret:
+                          type: string
+                          example: <string>
+                    status:
+                      type: string
+                      example: pause
+                    subscriptions:
+                      type: array
+                      items:
+                        type: string
+                        example: <string>
+                      example:
+                        - <string>
+                        - <string>
+            example:
+              webhook:
+                authentication:
+                  add_position: header
+                  data:
+                    password: <string>
+                    username: <string>
+                  type: bearer_token
+                custom_headers:
+                  header-one: "new_value_one"
+                  header-two: "new_value_two"
+                description: <string>
+                endpoint: <string>
+                external_source:
+                  data:
+                    app_id: <integer>
+                    installation_id: <integer>
+                  type: zendesk_app
+                http_method: PATCH
+                name: <string>
+                request_format: xml
+                signing_secret:
+                  algorithm: SHA256
+                  secret: <string>
+                status: pause
+                subscriptions:
+                  - <string>
+                  - <string>
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook:
+                    type: object
+                    properties:
+                      authentication:
+                        type: object
+                        properties:
+                          add_position:
+                            type: string
+                            example: header
+                          data:
+                            type: object
+                            properties:
+                              username:
+                                type: string
+                                example: <string>
+                          type:
+                            type: string
+                            example: basic_auth
+                      created_at:
+                        type: string
+                        example: <dateTime>
+                      created_by:
+                        type: string
+                        example: <string>
+                      custom_headers:
+                        type: object
+                        additionalProperties:
+                          type: string
+                          example:
+                            header-one: <string>
+                            header-two: <string>
+                      description:
+                        type: string
+                        example: <string>
+                      endpoint:
+                        type: string
+                        example: <string>
+                      external_source:
+                        type: object
+                        properties:
+                          data:
+                            type: object
+                            properties:
+                              app_id:
+                                type: string
+                                example: <integer>
+                              installation_id:
+                                type: string
+                                example: <integer>
+                          type:
+                            type: string
+                            example: zendesk_app
+                      http_method:
+                        type: string
+                        example: DELETE
+                      id:
+                        type: string
+                        example: <string>
+                      name:
+                        type: string
+                        example: <string>
+                      request_format:
+                        type: string
+                        example: xml
+                      signing_secret:
+                        type: object
+                        properties:
+                          algorithm:
+                            type: string
+                            example: SHA256
+                          secret:
+                            type: string
+                            example: <string>
+                      status:
+                        type: string
+                        example: active
+                      subscriptions:
+                        type: array
+                        items:
+                          type: string
+                          example: <string>
+                        example:
+                          - <string>
+                          - <string>
+                      updated_at:
+                        type: string
+                        example: <dateTime>
+                      updated_by:
+                        type: string
+                        example: <string>
+              examples:
+                Created:
+                  value:
+                    webhook:
+                      authentication:
+                        add_position: header
+                        data:
+                          username: <string>
+                        type: basic_auth
+                      created_at: <dateTime>
+                      created_by: <string>
+                      custom_headers:
+                        header-one: <string>
+                      description: <string>
+                      endpoint: <string>
+                      external_source:
+                        data:
+                          app_id: <integer>
+                          installation_id: <integer>
+                        type: zendesk_app
+                      http_method: DELETE
+                      id: <string>
+                      name: <string>
+                      request_format: xml
+                      signing_secret:
+                        algorithm: SHA256
+                        secret: <string>
+                      status: active
+                      subscriptions:
+                        - <string>
+                        - <string>
+                      updated_at: <dateTime>
+                      updated_by: <string>
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Bad Request:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: <string>
+                        detail:
+                          type: string
+                          example: <string>
+                        id:
+                          type: string
+                          example: <string>
+                        source:
+                          type: object
+                          properties:
+                            parameter:
+                              type: string
+                              example: <string>
+                            pointer:
+                              type: string
+                              example: <string>
+                        title:
+                          type: string
+                          example: <string>
+                    example:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+              examples:
+                Forbidden:
+                  value:
+                    errors:
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+                      - code: <string>
+                        detail: <string>
+                        id: <string>
+                        source:
+                          parameter: <string>
+                          pointer: <string>
+                        title: <string>
+tags:
+  - name: api
+  - name: v2
+  - name: webhooks
+  - name: '{webhook_id}'
+  - name: invocations
+  - name: '{invocation_id}'
+  - name: attempts
+  - name: signing_secret
+  - name: test

@@ -95,19 +95,20 @@ func (r *customStatusResource) Configure(ctx context.Context, request resource.C
 		return
 	}
 
-	client, ok := request.ProviderData.(*zendesk_api.SupportApi)
+	providerData, ok := request.ProviderData.(zendeskProviderData)
 
 	if !ok {
 		response.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *zendesk_api.Service, got: %T. Please report this issue to the provider developers.",
+			fmt.Sprintf("Expected *zendeskProviderData, got: %T. Please report this issue to the provider developers.",
 				request.ProviderData),
 		)
 
 		return
 	}
 
-	r.client = client
+	r.client = providerData.supportApi
+
 }
 
 func (r *customStatusResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {

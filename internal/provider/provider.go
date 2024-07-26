@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"strings"
 	"terraform-provider-zendesk/zendesk_api"
+	"terraform-provider-zendesk/zendesk_webhook_api"
 )
 
 // Ensure zendeskProvider satisfies various provider interfaces.
@@ -26,6 +27,11 @@ type zendeskProvider struct {
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
+}
+
+type zendeskProviderData struct {
+	supportApi *zendesk_api.SupportApi
+	webhookApi *zendesk_webhook_api.WebhookApi
 }
 
 // zendeskProviderModel maps provider schema data to a Go type.
@@ -181,29 +187,35 @@ func (p *zendeskProvider) Configure(ctx context.Context, req provider.ConfigureR
 		return
 	}
 
-	tflog.Debug(ctx, "Creating Zendesk API client")
-	// Make the Zendesk client available during DataSource and Resource
+	tflog.Debug(ctx, "Creating Zendesk API clients")
+	// Make the Zendesk clients available during DataSource and Resource
 	// type Configure methods.*/
-	client :=
-		zendesk_api.NewSupportApi(
+	providerData := zendeskProviderData{
+		supportApi: zendesk_api.NewSupportApi(
 			hostUrl,
 			email,
 			apiToken,
-		)
+		),
+		webhookApi: zendesk_webhook_api.NewWebhookApi(
+			hostUrl,
+			email,
+			apiToken,
+		)}
 
-	resp.DataSourceData = client
-	resp.ResourceData = client
+	resp.DataSourceData = providerData
+	resp.ResourceData = providerData
 	tflog.Info(ctx, "Zendesk Provider configured successfully")
 }
 
 func (p *zendeskProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewCustomStatusResource,
+		NewWebhookResource,
 	}
 }
 
 func (p *zendeskProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	//TODO
+	// no data sources yet
 	return nil
 }
 

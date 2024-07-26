@@ -26,4 +26,4 @@ linters:
     - unconvert
     - unparam
     - unused
-    - vet
+    - govet
