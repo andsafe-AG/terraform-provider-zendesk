@@ -11,10 +11,11 @@ import (
 	"testing"
 )
 
-func response200(t *testing.T) *zendesk_webhook_api.ShowWebhookWrap {
+func responseShow200(t *testing.T) *zendesk_webhook_api.ShowWebhookWrap {
 	var response zendesk_webhook_api.ShowWebhookWrap
-	str := `{"JSON200": {"webhook": {"name": "test-webhook", "id": "123456", "created_at": "2024-07-22T15:02:03Z",
+	str := `{"JSON200": {"webhook": {"name": "test-webhook", "id": "123456", "created_at": "2024-07-25T09:58:03Z",
 	"updated_at": "2024-08-23T09:01:03.12345Z", "endpoint": "https://example.com", "description": "test webhook",
+	"authentication": {"type": "basic_auth", "data": {"username": "test-user"}, "add_position": "header"},
 	"request_format": "json", "http_method": "POST", "created_by": "tester", "updated_by": "tester2",
 	"custom_headers": {"header1": "value1", "header2": "value2"},
 	"external_source": {"data": {"app_id": "345", "installation_id":"id"}, "type": "app_installation"},
@@ -36,19 +37,20 @@ func TestWebhookMapper_PutWebhookShowResponseToStateModel(t *testing.T) {
 		showWebhookResponse *zendesk_webhook_api.ShowWebhookWrap
 		webhookState        *WebhookModel
 	}
+	webhookValueNull := WebhookModel{Webhook: NewWebhookValueNull()}
 	tests := []struct {
 		name            string
 		args            args
 		wantDiagnostics diag.Diagnostics
 		assertFunction  AssertModel
 	}{
-		{name: "all attributes given",
+		{name: "all non-sensitive attributes given",
 			args: args{context.Background(),
-				response200(t),
-				&WebhookModel{},
+				responseShow200(t),
+				&webhookValueNull,
 			},
 			wantDiagnostics: nil,
-			assertFunction:  modelForResponse200AllAttributes},
+			assertFunction:  modelForResponse200AllNonSensitiveAttributes},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -61,6 +63,60 @@ func TestWebhookMapper_PutWebhookShowResponseToStateModel(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestWebhookMapper_PutCreateResponseToStateModel(t *testing.T) {
+	type args struct {
+		ctx                 context.Context
+		showWebhookResponse *zendesk_webhook_api.CreateOrCloneWebhookWrap
+		webhookState        *WebhookModel
+	}
+	tests := []struct {
+		name           string
+		args           args
+		assertFunction AssertModel
+	}{
+		{name: "all attributes given",
+			args: args{context.Background(),
+				responseCreate201(t),
+				getCreateWebhookModel(),
+			},
+			assertFunction: modelForCreateResponse200AllAttributes},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			we := &WebhookMapper{}
+
+			diags := we.UpdateAttributesWithCreateResponse(nil, tt.args.showWebhookResponse, tt.args.webhookState)
+			assert.Equal(t, false, diags.HasError())
+			tt.assertFunction(t, tt.args.webhookState)
+
+		})
+	}
+}
+
+func responseCreate201(t *testing.T) *zendesk_webhook_api.CreateOrCloneWebhookWrap {
+	response := &zendesk_webhook_api.CreateOrCloneWebhookWrap{}
+	str := `{"JSON201":{"webhook": {"id": "123456", "name": "test-webhook", 
+	"authentication": {"type": "basic_auth", "data": {"username": "test-user", "password": "test-word"},
+	"add_position": "header"},
+	 "endpoint": "https://example.com", "description": "test webhook",
+	"request_format": "json", "http_method": "POST", 
+	"custom_headers": {"header1": "value1", "header2": "value2"},
+	"status": "active",
+	"subscriptions": ["subscription1"],
+	"external_source": {"data": {"app_id": "345", "installation_id":"id"}, "type": "app_installation"},
+	"signing_secret": { "secret": "secret-value", "algorithm": "SHA256"},
+	"created_at": "2024-07-25T09:58:03Z",
+    "created_by": "19293454834333"
+	}}, "Response":{"StatusCode":201}}`
+
+	err := json.Unmarshal([]byte(str), response)
+	if err != nil {
+		t.Errorf("Error unmarshalling response: %v", err)
+		panic(err)
+	}
+	return response
 }
 
 func TestWebhookMapper_MapToCreateRequestBody(t *testing.T) {
@@ -105,7 +161,7 @@ func TestWebhookMapper_MapToUpdateRequestBody(t *testing.T) {
 	}{
 		{name: "all attributes filled",
 			args: args{ctx: context.Background(),
-				r: getCreateWebhookModel()},
+				r: getUpdateWebhookModel()},
 			want:            getUpdateRequestBody(),
 			wantDiagnostics: nil},
 		{name: "Authentication attributes filled",
@@ -225,6 +281,44 @@ func getCreateWebhookModel() *WebhookModel {
 	return &model
 }
 
+func getUpdateWebhookModel() *WebhookModel {
+	model := WebhookModel{}
+	auth := NewAuthenticationValueNull()
+	auth.AuthenticationType = types.StringValue("basic_auth")
+	dataValue := NewDataValueNull()
+	dataValue.Username = types.StringValue("test-user")
+	dataValue.Password = types.StringValue("test-word")
+	auth.Data, _ = dataValue.ToObjectValue(context.Background())
+	auth.AddPosition = types.StringValue("header")
+	model.Webhook.Authentication, _ = auth.ToObjectValue(context.Background())
+
+	headers := make(map[string]attr.Value)
+	headers["header1"] = types.StringValue("value1")
+	headers["header2"] = types.StringValue("value2")
+
+	model.Webhook.CustomHeaders, _ = types.MapValue(types.StringType, headers)
+	model.Webhook.Description = types.StringValue("test webhook")
+	model.Webhook.Endpoint = types.StringValue("https://example.com")
+	externalSourceValue := NewExternalSourceValueNull()
+	externalSourceValue.ExternalSourceType = types.StringValue("app_installation")
+	externalSourceData := NewExternalSourceDataValueNull()
+	externalSourceData.AppId = types.StringValue("345")
+	externalSourceData.InstallationId = types.StringValue("id")
+	externalSourceValue.ExternalSourceData, _ = externalSourceData.ToObjectValue(context.Background())
+	model.Webhook.ExternalSource, _ = externalSourceValue.ToObjectValue(context.Background())
+
+	model.Webhook.HttpMethod = types.StringValue("POST")
+	model.Webhook.Name = types.StringValue("test-webhook")
+	model.Webhook.RequestFormat = types.StringValue("json")
+	model.Webhook.Status = types.StringValue("active")
+	model.Webhook.Subscriptions, _ = types.ListValue(types.StringType, []attr.Value{types.StringValue("subscription1")})
+	signingSecretValue := NewSigningSecretValueNull()
+	signingSecretValue.Algorithm = types.StringValue("SHA256")
+	signingSecretValue.Secret = types.StringValue("secret-value")
+	model.Webhook.SigningSecret, _ = signingSecretValue.ToObjectValue(context.Background())
+	return &model
+}
+
 func createRequestBody200() *zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody {
 	requestBody := zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody{}
 
@@ -234,9 +328,9 @@ func createRequestBody200() *zendesk_webhook_api.CreateOrCloneWebhookJSONRequest
 	 "endpoint": "https://example.com", "description": "test webhook",
 	"request_format": "json", "http_method": "POST", 
 	"custom_headers": {"header1": "value1", "header2": "value2"},
-	"external_source": {"data": {"app_id": "345", "installation_id":"id"}, "type": "app_installation"},
 	"status": "active",
 	"subscriptions": ["subscription1"],
+	"external_source": {"data": {"app_id": "345", "installation_id":"id"}, "type": "app_installation"},
 	"signing_secret": { "secret": "secret-value", "algorithm": "SHA256"}
 	}}`
 
@@ -249,12 +343,44 @@ func createRequestBody200() *zendesk_webhook_api.CreateOrCloneWebhookJSONRequest
 	return &requestBody
 }
 
-func modelForResponse200AllAttributes(t *testing.T, model *WebhookModel) {
+func modelForCreateResponse200AllAttributes(t *testing.T, model *WebhookModel) {
 
 	assert.Equal(t, types.StringValue("123456"), model.WebhookId)
 	assert.Equal(t, "123456", model.Webhook.Id.ValueString())
 	assert.Equal(t, "test-webhook", model.Webhook.Name.ValueString())
-	assert.Equal(t, "2024-07-22T15:02:03Z", model.Webhook.CreatedAt.ValueString())
+	assert.Equal(t, "2024-07-25T09:58:03Z", model.Webhook.CreatedAt.ValueString())
+	assert.Equal(t, true, model.Webhook.UpdatedAt.IsNull())
+	assert.Equal(t, "19293454834333", model.Webhook.CreatedBy.ValueString())
+	assert.Equal(t, true, model.Webhook.UpdatedBy.IsNull())
+	assert.Equal(t, "https://example.com", model.Webhook.Endpoint.ValueString())
+	assert.Equal(t, "test webhook", model.Webhook.Description.ValueString())
+	assert.Equal(t, "json", model.Webhook.RequestFormat.ValueString())
+	assert.Equal(t, "POST", model.Webhook.HttpMethod.ValueString())
+	assert.Equal(t, "\"app_installation\"", model.Webhook.ExternalSource.Attributes()["type"].String())
+
+	externalSourceData, ok := model.Webhook.ExternalSource.Attributes()["external_source_data"].(types.Object)
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "\"345\"", externalSourceData.Attributes()["app_id"].String())
+	assert.Equal(t, "\"id\"", externalSourceData.Attributes()["installation_id"].String())
+	assert.Equal(t, "\"value1\"", model.Webhook.CustomHeaders.Elements()["header1"].String())
+	assert.Equal(t, "\"value2\"", model.Webhook.CustomHeaders.Elements()["header2"].String())
+	assert.Equal(t, "active", model.Webhook.Status.ValueString())
+	assert.Equal(t, "\"subscription1\"", model.Webhook.Subscriptions.Elements()[0].String())
+	assert.Equal(t, "\"secret-value\"", model.Webhook.SigningSecret.Attributes()["secret"].String())
+	assert.Equal(t, "\"SHA256\"", model.Webhook.SigningSecret.Attributes()["algorithm"].String())
+
+	assert.Equal(t, "\"header\"", model.Webhook.Authentication.Attributes()["add_position"].String())
+	assert.Equal(t, "\"basic_auth\"", model.Webhook.Authentication.Attributes()["type"].String())
+	assert.Equal(t, "\"test-user\"", model.Webhook.Authentication.Attributes()["data"].(types.Object).Attributes()["username"].String())
+	assert.Equal(t, "\"test-word\"", model.Webhook.Authentication.Attributes()["data"].(types.Object).Attributes()["password"].String())
+
+}
+func modelForResponse200AllNonSensitiveAttributes(t *testing.T, model *WebhookModel) {
+
+	assert.Equal(t, types.StringValue("123456"), model.WebhookId)
+	assert.Equal(t, "123456", model.Webhook.Id.ValueString())
+	assert.Equal(t, "test-webhook", model.Webhook.Name.ValueString())
+	assert.Equal(t, "2024-07-25T09:58:03Z", model.Webhook.CreatedAt.ValueString())
 	assert.Equal(t, "2024-08-23T09:01:03.12345Z", model.Webhook.UpdatedAt.ValueString())
 	assert.Equal(t, "tester", model.Webhook.CreatedBy.ValueString())
 	assert.Equal(t, "tester2", model.Webhook.UpdatedBy.ValueString())
@@ -274,6 +400,11 @@ func modelForResponse200AllAttributes(t *testing.T, model *WebhookModel) {
 	assert.Equal(t, "\"subscription1\"", model.Webhook.Subscriptions.Elements()[0].String())
 	assert.Equal(t, "\"secret-value\"", model.Webhook.SigningSecret.Attributes()["secret"].String())
 	assert.Equal(t, "\"SHA256\"", model.Webhook.SigningSecret.Attributes()["algorithm"].String())
+
+	assert.Equal(t, "\"header\"", model.Webhook.Authentication.Attributes()["add_position"].String())
+	assert.Equal(t, "\"basic_auth\"", model.Webhook.Authentication.Attributes()["type"].String())
+	assert.Equal(t, "\"test-user\"", model.Webhook.Authentication.Attributes()["data"].(types.Object).Attributes()["username"].String())
+	assert.Equal(t, true, model.Webhook.Authentication.Attributes()["data"].(types.Object).Attributes()["password"].IsNull())
 
 }
 

@@ -2,6 +2,7 @@ package resource_webhook
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,6 +21,7 @@ func NewWebhookMapper() *WebhookMapper {
 func (*WebhookMapper) PutWebhookShowResponseToStateModel(ctx context.Context, showWebhookResponse *zendesk_webhook_api.ShowWebhookWrap, webhookState *WebhookModel) diag.Diagnostics {
 
 	webhookWithoutSensitive := showWebhookResponse.JSON200.Webhook
+
 	diagnostics := putWebhookResponseBodyToStateModel(ctx, webhookWithoutSensitive, webhookState)
 	if diagnostics != nil && diagnostics.HasError() {
 		return diagnostics
@@ -28,14 +30,24 @@ func (*WebhookMapper) PutWebhookShowResponseToStateModel(ctx context.Context, sh
 	return nil
 }
 
-func (m *WebhookMapper) PutCreateResponseToStateModel(ctx context.Context, response *zendesk_webhook_api.CreateOrCloneWebhookWrap, model *WebhookModel) diag.Diagnostics {
+func (*WebhookMapper) PutWebhookShowResponseAfterUpdateToStateModel(ctx context.Context, showWebhookResponse *zendesk_webhook_api.ShowWebhookWrap, webhookState *WebhookModel) diag.Diagnostics {
 
-	webhookWithoutSensitive := response.JSON201.Webhook
-	diagnostics := putWebhookResponseBodyToStateModel(ctx, webhookWithoutSensitive, model)
+	webhookWithoutSensitive := showWebhookResponse.JSON200.Webhook
+
+	diagnostics := putWebhookCreateResponseBodyToStateModel(ctx, webhookWithoutSensitive, webhookState)
+
 	if diagnostics != nil && diagnostics.HasError() {
 		return diagnostics
 	}
+
 	return nil
+}
+
+func (m *WebhookMapper) UpdateAttributesWithCreateResponse(ctx context.Context, response *zendesk_webhook_api.CreateOrCloneWebhookWrap, model *WebhookModel) diag.Diagnostics {
+
+	webhookWithoutSensitive := response.JSON201.Webhook
+	return putWebhookCreateResponseBodyToStateModel(ctx, webhookWithoutSensitive, model)
+
 }
 
 func (m *WebhookMapper) MapToCreateRequestBody(ctx context.Context, model *WebhookModel) (*zendesk_webhook_api.CreateOrCloneWebhookJSONRequestBody, diag.Diagnostics) {
@@ -63,19 +75,23 @@ func (m *WebhookMapper) MapToUpdateRequestBody(ctx context.Context, r *WebhookMo
 }
 
 func putWebhookResponseBodyToStateModel(ctx context.Context, webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive, webhookState *WebhookModel) diag.Diagnostics {
+
 	webhookState.WebhookId = types.StringValue(*webhookWithoutSensitive.Id)
-	authentication, diags := mapAuthentication(ctx, webhookWithoutSensitive)
+	var diags diag.Diagnostics
 
-	if diags.HasError() {
-		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
-		return diags
+	webhookState.Webhook.Id = stringValOrNull(webhookWithoutSensitive.Id)
+
+	diags2 := setAuthenticationFromResponseToState(ctx, webhookWithoutSensitive, webhookState)
+
+	if diags2 != nil && diags2.HasError() {
+		tflog.Error(ctx, "Error setting webhook authentication data from the API response to the TF state: ", map[string]interface{}{"error": diags2})
+		return diags2
+
 	}
-	webhookState.Webhook.Authentication = authentication
-
-	webhookState.Webhook.CreatedAt = stringValOrUnknown(webhookWithoutSensitive.CreatedAt)
-	webhookState.Webhook.CreatedBy = stringValOrUnknown(webhookWithoutSensitive.CreatedBy)
-	webhookState.Webhook.UpdatedAt = stringValOrUnknown(webhookWithoutSensitive.UpdatedAt)
-	webhookState.Webhook.UpdatedBy = stringValOrUnknown(webhookWithoutSensitive.UpdatedBy)
+	webhookState.Webhook.CreatedAt = stringValOrNull(webhookWithoutSensitive.CreatedAt)
+	webhookState.Webhook.CreatedBy = stringValOrNull(webhookWithoutSensitive.CreatedBy)
+	webhookState.Webhook.UpdatedAt = stringValOrNull(webhookWithoutSensitive.UpdatedAt)
+	webhookState.Webhook.UpdatedBy = stringValOrNull(webhookWithoutSensitive.UpdatedBy)
 
 	customHeaders, diagsMap := mapAMapOfString(webhookWithoutSensitive.CustomHeaders)
 	if diagsMap.HasError() {
@@ -83,8 +99,8 @@ func putWebhookResponseBodyToStateModel(ctx context.Context, webhookWithoutSensi
 		return diagsMap
 	}
 	webhookState.Webhook.CustomHeaders = customHeaders
-	webhookState.Webhook.Description = stringValOrUnknown(webhookWithoutSensitive.Description)
-	webhookState.Webhook.Endpoint = stringValOrUnknown(webhookWithoutSensitive.Endpoint)
+	webhookState.Webhook.Description = stringValOrNull(webhookWithoutSensitive.Description)
+	webhookState.Webhook.Endpoint = stringValOrNull(webhookWithoutSensitive.Endpoint)
 	externalSourceMapped, diagsExtSource := mapExternalSourceFromApiResponse(ctx, webhookWithoutSensitive)
 	if diagsExtSource.HasError() {
 		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diagsExtSource})
@@ -98,10 +114,9 @@ func putWebhookResponseBodyToStateModel(ctx context.Context, webhookWithoutSensi
 	}
 
 	webhookState.Webhook.ExternalSource = externalSourceValue
-	webhookState.Webhook.HttpMethod = stringValOrUnknown(webhookWithoutSensitive.HttpMethod)
-	webhookState.Webhook.Id = stringValOrUnknown(webhookWithoutSensitive.Id)
-	webhookState.Webhook.Name = stringValOrUnknown(webhookWithoutSensitive.Name)
-	webhookState.Webhook.RequestFormat = stringValOrUnknown(webhookWithoutSensitive.RequestFormat)
+	webhookState.Webhook.HttpMethod = stringValOrNull(webhookWithoutSensitive.HttpMethod)
+	webhookState.Webhook.Name = stringValOrNull(webhookWithoutSensitive.Name)
+	webhookState.Webhook.RequestFormat = stringValOrNull(webhookWithoutSensitive.RequestFormat)
 	secret, diags := mapSecret(ctx, webhookWithoutSensitive.SigningSecret)
 	if diags.HasError() {
 		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
@@ -109,7 +124,7 @@ func putWebhookResponseBodyToStateModel(ctx context.Context, webhookWithoutSensi
 	}
 
 	webhookState.Webhook.SigningSecret = secret
-	webhookState.Webhook.Status = stringValOrUnknown(webhookWithoutSensitive.Status)
+	webhookState.Webhook.Status = stringValOrNull(webhookWithoutSensitive.Status)
 
 	subscriptionList, diags := mapList(webhookWithoutSensitive.Subscriptions)
 	if diags.HasError() {
@@ -118,6 +133,103 @@ func putWebhookResponseBodyToStateModel(ctx context.Context, webhookWithoutSensi
 	}
 	webhookState.Webhook.Subscriptions = subscriptionList
 	return nil
+}
+
+func putWebhookCreateResponseBodyToStateModel(ctx context.Context, webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive, webhookPlan *WebhookModel) diag.Diagnostics {
+	webhookPlan.WebhookId = types.StringValue(*webhookWithoutSensitive.Id)
+	webhookPlan.Webhook.Id = stringValOrNull(webhookWithoutSensitive.Id)
+
+	webhookPlan.Webhook.CreatedAt = stringValOrNull(webhookWithoutSensitive.CreatedAt)
+	webhookPlan.Webhook.CreatedBy = stringValOrNull(webhookWithoutSensitive.CreatedBy)
+	webhookPlan.Webhook.UpdatedAt = stringValOrNull(webhookWithoutSensitive.UpdatedAt)
+	webhookPlan.Webhook.UpdatedBy = stringValOrNull(webhookWithoutSensitive.UpdatedBy)
+
+	externalSourceMapped, diagsExtSource := mapExternalSourceFromApiResponse(ctx, webhookWithoutSensitive)
+	if diagsExtSource.HasError() {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diagsExtSource})
+		return diagsExtSource
+	}
+
+	externalSourceValue, diagnostics := externalSourceMapped.ToObjectValue(ctx)
+	if diagnostics.HasError() {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diagnostics})
+		return diagnostics
+	}
+
+	webhookPlan.Webhook.ExternalSource = externalSourceValue
+
+	secret, diags := mapSecret(ctx, webhookWithoutSensitive.SigningSecret)
+	if diags.HasError() {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
+		return diags
+	}
+
+	webhookPlan.Webhook.SigningSecret = secret
+
+	return nil
+}
+
+func setAuthenticationFromResponseToState(ctx context.Context, webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive, webhookState *WebhookModel) diag.Diagnostics {
+
+	if webhookWithoutSensitive.Authentication == nil {
+		// No Authentication
+		nullObject := NewAuthenticationValueNull()
+		nullValue, diagnostics := nullObject.ToObjectValue(ctx)
+		if diagnostics.HasError() {
+			tflog.Error(ctx, "Error reading authentication value from the API: ", map[string]interface{}{"error": diagnostics.Errors()})
+			return diagnostics
+		}
+		webhookState.Webhook.Authentication = nullValue
+		return nil
+	}
+	if webhookState.Webhook.Authentication.IsNull() {
+		var diagnostics diag.Diagnostics
+		webhookState.Webhook.Authentication, diagnostics = NewAuthenticationValueNull().ToObjectValue(ctx)
+		if diagnostics.HasError() {
+			tflog.Error(ctx, "Error creating Authentication for the webhook state: ", map[string]interface{}{"error": diagnostics.Errors()})
+			return diagnostics
+		}
+	}
+
+	authenticationValueOld, diags := AuthenticationType.ValueFromObject(AuthenticationType{}, ctx, webhookState.Webhook.Authentication)
+
+	if diags.HasError() {
+		tflog.Error(ctx, "Error getting ValueFromObject on Authentication from Webhook State ", map[string]interface{}{"error": diags})
+		return diags
+	}
+
+	authenticationValueOldCast, ok := authenticationValueOld.(AuthenticationValue)
+	if !ok {
+		return diag.Diagnostics{diag.NewErrorDiagnostic("Error when casting old state Authentication to AuthenticationValue", "error")}
+	}
+
+	authDataMapped, diags := mergeAuthData(ctx, webhookWithoutSensitive, authenticationValueOldCast.Data)
+	if diags.HasError() {
+		tflog.Error(ctx, "Error reading authentication data from the API: ", map[string]interface{}{"error": diags})
+		return diags
+	}
+	tflog.Debug(ctx, fmt.Sprintf("Mapped Auth Data: %v", authDataMapped))
+
+	authData, diags := authDataMapped.ToObjectValue(ctx)
+	if diags.HasError() {
+		tflog.Error(ctx, "Error reading authentication data to ObjectValue: ", map[string]interface{}{"error": diags.Errors()})
+		return diags
+	}
+
+	authenticationValueOldCast.AddPosition = stringValOrNull(webhookWithoutSensitive.Authentication.AddPosition)
+	authenticationValueOldCast.Data = authData
+	authenticationValueOldCast.AuthenticationType = stringValOrNull(webhookWithoutSensitive.Authentication.Type)
+
+	authentication, diags := authenticationValueOldCast.ToObjectValue(ctx)
+
+	if diags.HasError() {
+		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
+		return diags
+	}
+
+	webhookState.Webhook.Authentication = authentication
+
+	return diags
 }
 
 func mapPlanModelToWebhookRequestBody(ctx context.Context, model *WebhookModel, webhookRequestBody *zendesk_webhook_api.WebhookWithSensitiveData) diag.Diagnostics {
@@ -173,6 +285,56 @@ func mapPlanModelToWebhookRequestBody(ctx context.Context, model *WebhookModel, 
 	return nil
 }
 
+func mergeAuthData(ctx context.Context, webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive, dataOld basetypes.ObjectValue) (*DataValue, diag.Diagnostics) {
+	var dataOldObject DataValue
+	if dataOld.IsNull() {
+		dataOldObject = NewDataValueNull()
+	} else {
+
+		dataValueOld, diags := DataType.ValueFromObject(DataType{}, ctx, dataOld)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		dataValueOldCast, ok := dataValueOld.(DataValue)
+		if !ok {
+			return nil, diag.Diagnostics{diag.NewErrorDiagnostic("Error when casting old state Data to DataValue", "error")}
+		}
+		dataOldObject = dataValueOldCast
+	}
+
+	oldPassword := dataOldObject.Password
+	oldToken := dataOldObject.Token
+
+	if webhookWithoutSensitive.Authentication.Data == nil {
+		return &dataOldObject, nil
+	}
+
+	newUsername := stringValOrNull(webhookWithoutSensitive.Authentication.Data.Username)
+	newPassword := oldPassword
+	// if username was removed, then the basic auth is not possible, so password must have been removed as well
+	if newUsername.IsNull() {
+		newPassword = basetypes.NewStringNull()
+		if oldToken.IsNull() {
+			newToken := basetypes.NewStringNull()
+			return &DataValue{
+				Password: newPassword,
+				Token:    newToken,
+				Username: newUsername,
+			}, nil
+
+		}
+		return &DataValue{
+			Token: oldToken,
+		}, nil
+	}
+
+	return &DataValue{
+		Password: newPassword,
+		Token:    types.StringNull(),
+		Username: newUsername,
+	}, nil
+}
 func setSigningSecret(model *WebhookModel, webhookWithSensitiveData *zendesk_webhook_api.WebhookWithSensitiveData) {
 	if !model.Webhook.SigningSecret.IsNull() && !model.Webhook.SigningSecret.IsUnknown() {
 		webhookWithSensitiveData.SigningSecret = &zendesk_webhook_api.SigningSecret{}
@@ -242,22 +404,6 @@ func getCustomHeaders(ctx context.Context, model *WebhookModel) map[string]strin
 	return customHeaders
 }
 
-func mapAuthentication(ctx context.Context, webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive) (basetypes.ObjectValue, diag.Diagnostics) {
-
-	if webhookWithoutSensitive.Authentication == nil {
-		return types.ObjectNull(AuthenticationValue{}.AttributeTypes(ctx)), nil
-	}
-
-	authMapped, diags := mapAuthenticationFromApiResponse(ctx, webhookWithoutSensitive)
-	if diags.HasError() {
-		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
-		return basetypes.ObjectValue{}, diags
-	}
-
-	authentication, diags := types.ObjectValueFrom(ctx, authMapped.AttributeTypes(ctx), authMapped)
-	return authentication, diags
-}
-
 func mapList(listOfString *[]string) (basetypes.ListValue, diag.Diagnostics) {
 	if listOfString == nil {
 		return basetypes.NewListNull(types.StringType), nil
@@ -280,8 +426,8 @@ func mapSecret(ctx context.Context, secret *struct {
 
 	}
 	secretAttributes := make(map[string]attr.Value)
-	secretAttributes["algorithm"] = stringValOrUnknown(secret.Algorithm)
-	secretAttributes["secret"] = stringValOrUnknown(secret.Secret)
+	secretAttributes["algorithm"] = stringValOrNull(secret.Algorithm)
+	secretAttributes["secret"] = stringValOrNull(secret.Secret)
 	secretValue, diags := NewSigningSecretValue(SigningSecretValue{}.AttributeTypes(context.Background()), secretAttributes)
 	if diags.HasError() {
 		return basetypes.ObjectValue{}, diags
@@ -308,7 +454,7 @@ func mapExternalSourceFromApiResponse(ctx context.Context, webhookWithoutSensiti
 		return ExternalSourceValue{}, diagnostics
 	}
 	externalSourceAttributes["external_source_data"] = externalSourceDataObject
-	externalSourceAttributes["type"] = stringValOrUnknown(webhookWithoutSensitive.ExternalSource.Type)
+	externalSourceAttributes["type"] = stringValOrNull(webhookWithoutSensitive.ExternalSource.Type)
 	externalSourceVal, diags := NewExternalSourceValue(ExternalSourceValue{}.AttributeTypes(ctx), externalSourceAttributes)
 
 	return externalSourceVal, diags
@@ -321,8 +467,8 @@ func mapExternalSourceData(data *struct {
 }) (ExternalSourceDataValue, diag.Diagnostics) {
 
 	externalSourceDataAttributes := make(map[string]attr.Value)
-	externalSourceDataAttributes["app_id"] = stringValOrUnknown(data.AppId)
-	externalSourceDataAttributes["installation_id"] = stringValOrUnknown(data.InstallationId)
+	externalSourceDataAttributes["app_id"] = stringValOrNull(data.AppId)
+	externalSourceDataAttributes["installation_id"] = stringValOrNull(data.InstallationId)
 	externalSourceData, diags := NewExternalSourceDataValue(ExternalSourceDataValue{}.AttributeTypes(context.Background()), externalSourceDataAttributes)
 	return externalSourceData, diags
 }
@@ -340,50 +486,9 @@ func mapAMapOfString(headers *map[string]string) (basetypes.MapValue, diag.Diagn
 	return basetypes.NewMapValue(types.StringType, customHeaders)
 }
 
-func mapAuthenticationFromApiResponse(ctx context.Context, webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive) (*AuthenticationValue, diag.Diagnostics) {
-
-	if webhookWithoutSensitive.Authentication == nil {
-		nullObject := NewAuthenticationValueNull()
-		return &nullObject, nil
-	}
-
-	authDataMapped := mapAuthData(webhookWithoutSensitive)
-
-	authData, diags := authDataMapped.ToObjectValue(ctx)
-	if diags.HasError() {
-		tflog.Error(ctx, "Error reading webhook data from the API: ", map[string]interface{}{"error": diags})
-		return nil, diags
-	}
-	auth := AuthenticationValue{
-		AddPosition:        stringValOrUnknown(webhookWithoutSensitive.Authentication.AddPosition),
-		Data:               authData,
-		AuthenticationType: stringValOrUnknown(webhookWithoutSensitive.Authentication.Type),
-	}
-
-	return &auth, nil
-}
-
-func mapAuthData(webhookWithoutSensitive *zendesk_webhook_api.WebhookWithoutSensitive) *DataValue {
-
-	if webhookWithoutSensitive.Authentication.Data == nil {
-		nullObjectData := NewDataValueNull()
-		return &nullObjectData
-	}
-
-	username := webhookWithoutSensitive.Authentication.Data.Username
-
-	authData := DataValue{
-		Password: types.StringUnknown(),
-		Token:    types.StringUnknown(),
-		Username: stringValOrUnknown(username),
-	}
-
-	return &authData
-}
-
-func stringValOrUnknown(value *string) basetypes.StringValue {
+func stringValOrNull(value *string) basetypes.StringValue {
 	if value == nil {
-		return types.StringUnknown()
+		return types.StringNull()
 	}
 
 	return types.StringValue(*value)
