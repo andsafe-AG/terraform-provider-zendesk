@@ -14,7 +14,7 @@ require (
 	github.com/oapi-codegen/oapi-codegen/v2 v2.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/testcontainers/testcontainers-go v0.31.0
-	gotest.tools/v3 v3.5.0
+	gotest.tools/v3 v3.5.1
 )
 
 require (
