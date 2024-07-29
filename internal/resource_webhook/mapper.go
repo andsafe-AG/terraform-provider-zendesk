@@ -143,6 +143,13 @@ func putWebhookCreateResponseBodyToStateModel(ctx context.Context, webhookWithou
 	webhookPlan.Webhook.CreatedBy = stringValOrNull(webhookWithoutSensitive.CreatedBy)
 	webhookPlan.Webhook.UpdatedAt = stringValOrNull(webhookWithoutSensitive.UpdatedAt)
 	webhookPlan.Webhook.UpdatedBy = stringValOrNull(webhookWithoutSensitive.UpdatedBy)
+	headers, diags := mapAMapOfString(webhookWithoutSensitive.CustomHeaders)
+
+	if diags.HasError() {
+		tflog.Error(ctx, "Error reading CustomHeaders from the API: ", map[string]interface{}{"error": diags})
+		return diags
+	}
+	webhookPlan.Webhook.CustomHeaders = headers
 
 	externalSourceMapped, diagsExtSource := mapExternalSourceFromApiResponse(ctx, webhookWithoutSensitive)
 	if diagsExtSource.HasError() {
@@ -262,7 +269,7 @@ func mapPlanModelToWebhookRequestBody(ctx context.Context, model *WebhookModel, 
 	}
 
 	customHeaders := getCustomHeaders(ctx, model)
-	if customHeaders != nil {
+	if customHeaders != nil && len(customHeaders) > 0 {
 		webhookRequestBody.CustomHeaders = &customHeaders
 	}
 	webhookRequestBody.Description = model.Webhook.Description.ValueStringPointer()
@@ -474,7 +481,7 @@ func mapExternalSourceData(data *struct {
 }
 
 func mapAMapOfString(headers *map[string]string) (basetypes.MapValue, diag.Diagnostics) {
-	if headers == nil {
+	if headers == nil || len(*headers) == 0 {
 		return basetypes.NewMapNull(types.StringType), nil
 	}
 
