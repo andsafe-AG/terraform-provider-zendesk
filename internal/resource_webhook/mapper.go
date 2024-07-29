@@ -269,7 +269,7 @@ func mapPlanModelToWebhookRequestBody(ctx context.Context, model *WebhookModel, 
 	}
 
 	customHeaders := getCustomHeaders(ctx, model)
-	if customHeaders != nil && len(customHeaders) > 0 {
+	if len(customHeaders) > 0 {
 		webhookRequestBody.CustomHeaders = &customHeaders
 	}
 	webhookRequestBody.Description = model.Webhook.Description.ValueStringPointer()
