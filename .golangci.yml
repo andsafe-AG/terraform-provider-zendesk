@@ -1,28 +1,42 @@
 # Visit https://golangci-lint.run/ for usage documentation
 # and information on other useful linters
+version: "2"
+
 issues:
-  max-per-linter: 0
   max-same-issues: 0
-  exclude-files:
-    - zendesk_api/zendesk_client.gen.go
 
 linters:
-  disable-all: true
+  default: none
   enable:
     - durationcheck
     - errcheck
     - forcetypeassert
     #- godot
-    - gofmt
-    - gosimple
+    - govet
     - ineffassign
     - makezero
     - misspell
     - nilerr
     - predeclared
-    - staticcheck
-    - tenv
+    - staticcheck # includes the former gosimple and stylecheck
     - unconvert
     - unparam
     - unused
-    - govet
+    - usetesting # replaces the removed tenv
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - zendesk_api/zendesk_client.gen.go
+
+formatters:
+  enable:
+    - gofmt
+  exclusions:
+    generated: lax
+    paths:
+      - zendesk_api/zendesk_client.gen.go

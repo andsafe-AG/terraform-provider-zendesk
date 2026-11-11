@@ -30,9 +30,9 @@ jobs:
       - run: go mod download
       - run: go build -v .
       - name: Run linters
-        uses: golangci/golangci-lint-action@a4f60bb28d35aeee14e6880718e0c85ff1882e64 # v6.0.1
+        uses: golangci/golangci-lint-action@d583c34f0599d37dbac4a198b9c83201be380893 # v9.3.0
         with:
-          version: latest
+          version: v2.15.0
 
   generate:
     runs-on: ubuntu-latest
