@@ -1,0 +1,739 @@
+{
+	"provider": {
+		"name": "zendesk"
+	},
+	"resources": [
+		{
+			"name": "custom_role",
+			"schema": {
+				"attributes": [
+					{
+						"name": "custom_role",
+						"single_nested": {
+							"computed_optional_required": "required",
+							"attributes": [
+								{
+									"name": "configuration",
+									"single_nested": {
+										"computed_optional_required": "computed_optional",
+										"attributes": [
+											{
+												"name": "actions_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What level of actions access the agent has. Allowed values: \"none\", \"workflows_and_zendesk\", \"all\""
+												}
+											},
+											{
+												"name": "assign_agent_statuses",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can assign agent statuses"
+												}
+											},
+											{
+												"name": "assign_tickets_to_any_brand",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can assign tickets to any brand and list all brands associated with an account sorted by name"
+												}
+											},
+											{
+												"name": "assign_tickets_to_any_group",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can assign tickets to any group"
+												}
+											},
+											{
+												"name": "brands_ticket_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What kind of ticket brands the agent can access. Allowed values: \"all\", \"within-brands\", \"selected-brands\""
+												}
+											},
+											{
+												"name": "capacity_rules_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What the agent can do with capacity rules. Allowed values: \"none\", \"all\", \"view-and-assign\""
+												}
+											},
+											{
+												"name": "change_management_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What level of access the agent has to change management. Allowed values: \"none\", \"view\", \"full\""
+												}
+											},
+											{
+												"name": "chat_access",
+												"bool": {
+													"computed_optional_required": "computed",
+													"description": "Whether or not the agent has access to Chat"
+												}
+											},
+											{
+												"name": "custom_objects",
+												"map_nested": {
+													"computed_optional_required": "computed_optional",
+													"nested_object": {
+														"attributes": [
+															{
+																"name": "scopes",
+																"list": {
+																	"computed_optional_required": "computed_optional",
+																	"element_type": {
+																		"string": {}
+																	}
+																}
+															}
+														]
+													},
+													"description": "A list of custom object keys mapped to JSON objects that define the agent's permissions (scopes) for each object. Allowed values: \"read\", \"update\", \"delete\", \"create\". The \"read\" permission is required if any other scopes are specified"
+												}
+											},
+											{
+												"name": "end_user_list_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can view lists of user profiles. Allowed values: \"full\", \"none\""
+												}
+											},
+											{
+												"name": "end_user_profile_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What the agent can do with end-user profiles. Allowed values: \"edit\", \"edit-within-org\", \"full\", \"readonly\""
+												}
+											},
+											{
+												"name": "execute_it_asset_management_actions",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can execute IT asset management actions"
+												}
+											},
+											{
+												"name": "explore_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "Allowed values: \"edit\", \"full\", \"none\", \"readonly\""
+												}
+											},
+											{
+												"name": "explore_reports",
+												"single_nested": {
+													"computed_optional_required": "computed_optional",
+													"attributes": [
+														{
+															"name": "brands_ticket_access",
+															"string": {
+																"computed_optional_required": "computed_optional",
+																"description": "Allowed values: \"all\", \"within-brands\", \"selected-brands\""
+															}
+														},
+														{
+															"name": "groups_ticket_access",
+															"string": {
+																"computed_optional_required": "computed_optional",
+																"description": "Allowed values: \"all\", \"within-groups\", \"selected-groups\""
+															}
+														},
+														{
+															"name": "ticket_access",
+															"string": {
+																"computed_optional_required": "computed_optional",
+																"description": "Legacy version. Allowed values: \"all\", \"within-groups\", \"selected-groups\""
+															}
+														},
+														{
+															"name": "ticket_access_selected_brands",
+															"list": {
+																"computed_optional_required": "computed_optional",
+																"element_type": {
+																	"string": {}
+																},
+																"description": "Brand ids the agent can view tickets from, when brands ticket access is \"selected-brands\""
+															}
+														},
+														{
+															"name": "ticket_access_selected_groups",
+															"list": {
+																"computed_optional_required": "computed_optional",
+																"element_type": {
+																	"string": {}
+																},
+																"description": "Group ids the agent can view tickets from, when ticket access is \"selected-groups\""
+															}
+														}
+													],
+													"description": "Access to Explore reports. See [Explore reports](#explore-reports)"
+												}
+											},
+											{
+												"name": "export_views",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can export views"
+												}
+											},
+											{
+												"name": "forum_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "The kind of access the agent has to the community in the help center. Allowed values: \"edit-topics\", \"full\", \"readonly\""
+												}
+											},
+											{
+												"name": "forum_access_restricted_content",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can access community content restricted by organization or visibility settings"
+												}
+											},
+											{
+												"name": "group_access",
+												"bool": {
+													"computed_optional_required": "computed",
+													"description": "Whether or not the agent can add or modify groups"
+												}
+											},
+											{
+												"name": "groups_ticket_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What kind of ticket groups the agent can access. Allowed values: \"all\", \"within-groups\", \"selected-groups\""
+												}
+											},
+											{
+												"name": "it_asset_management_access",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can access IT asset management"
+												}
+											},
+											{
+												"name": "light_agent",
+												"bool": {
+													"computed_optional_required": "computed",
+													"description": "Whether or not the agent is a light agent"
+												}
+											},
+											{
+												"name": "macro_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What the agent can do with macros. Allowed values: \"full\", \"manage-group\", \"manage-personal\", \"readonly\""
+												}
+											},
+											{
+												"name": "manage_api_credentials",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether the agent can manage API credentials"
+												}
+											},
+											{
+												"name": "manage_approval_requests",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage approval requests"
+												}
+											},
+											{
+												"name": "manage_automations",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage automations"
+												}
+											},
+											{
+												"name": "manage_business_rules",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage business rules"
+												}
+											},
+											{
+												"name": "manage_change_management_configuration",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage change management configuration"
+												}
+											},
+											{
+												"name": "manage_contextual_workspaces",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can view, add, and edit contextual workspaces"
+												}
+											},
+											{
+												"name": "manage_deletion_schedules",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What level of access the agent has to deletion schedules. Allowed values: \"all\", \"readonly\", \"none\""
+												}
+											},
+											{
+												"name": "manage_dynamic_content",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can access dynamic content"
+												}
+											},
+											{
+												"name": "manage_extensions_and_channels",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage channels and extensions"
+												}
+											},
+											{
+												"name": "manage_facebook",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage Facebook pages"
+												}
+											},
+											{
+												"name": "manage_group_memberships",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage group memberships"
+												}
+											},
+											{
+												"name": "manage_groups",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and modify groups"
+												}
+											},
+											{
+												"name": "manage_ip_bans",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage IP bans"
+												}
+											},
+											{
+												"name": "manage_it_asset_configuration",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage IT asset configuration"
+												}
+											},
+											{
+												"name": "manage_macro_content_suggestions",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage macro content suggestions"
+												}
+											},
+											{
+												"name": "manage_malicious_attachments",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage malicious attachments"
+												}
+											},
+											{
+												"name": "manage_organization_fields",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage organization fields"
+												}
+											},
+											{
+												"name": "manage_organizations",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and modify organizations"
+												}
+											},
+											{
+												"name": "manage_roles",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage custom roles with the exception of the role they're currently assigned. Doesn't allow agents to update role assignments for other agents. Allowed values: \"all-except-self\", \"none\""
+												}
+											},
+											{
+												"name": "manage_skills",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage skills"
+												}
+											},
+											{
+												"name": "manage_slas",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage SLAs"
+												}
+											},
+											{
+												"name": "manage_support_apps",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage support apps"
+												}
+											},
+											{
+												"name": "manage_suspended_tickets",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage suspended tickets"
+												}
+											},
+											{
+												"name": "manage_team_members",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage team members. Allows agents to update role assignments for other agents. Allowed values: \"all-with-self-restriction\", \"readonly\", \"none\""
+												}
+											},
+											{
+												"name": "manage_ticket_fields",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage ticket fields"
+												}
+											},
+											{
+												"name": "manage_ticket_forms",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage ticket forms"
+												}
+											},
+											{
+												"name": "manage_ticket_settings",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage ticket settings such as comments, attachments, followers, assignments, and notifications"
+												}
+											},
+											{
+												"name": "manage_triggers",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage triggers"
+												}
+											},
+											{
+												"name": "manage_user_fields",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can create and manage user fields"
+												}
+											},
+											{
+												"name": "manage_user_own_contacts",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage their own contact information"
+												}
+											},
+											{
+												"name": "manage_user_own_forwarding_numbers",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage their own forwarding numbers"
+												}
+											},
+											{
+												"name": "manage_user_own_photo",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can manage their own profile photo"
+												}
+											},
+											{
+												"name": "mask_end_user_email",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can mask end user email addresses"
+												}
+											},
+											{
+												"name": "mask_end_user_name",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can mask end user names"
+												}
+											},
+											{
+												"name": "mask_end_user_phone",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can mask end user phone numbers"
+												}
+											},
+											{
+												"name": "moderate_forums",
+												"bool": {
+													"computed_optional_required": "computed",
+													"description": "Whether or not the agent can moderate forums"
+												}
+											},
+											{
+												"name": "modify_closed_tickets",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can modify closed tickets"
+												}
+											},
+											{
+												"name": "organization_editing",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can add or modify organizations"
+												}
+											},
+											{
+												"name": "organization_notes_editing",
+												"bool": {
+													"computed_optional_required": "computed",
+													"description": "Whether or not the agent can add or modify organization notes"
+												}
+											},
+											{
+												"name": "read_macro_content_suggestions",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can read macro content suggestions"
+												}
+											},
+											{
+												"name": "report_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What the agent can do with reports. Allowed values: \"full\", \"none\", \"readonly\""
+												}
+											},
+											{
+												"name": "side_conversation_create",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can contribute to side conversations"
+												}
+											},
+											{
+												"name": "ticket_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What kind of tickets the agent can access. Allowed values: \"all\", \"assigned-only\", \"within-groups\", \"within-groups-and-public-groups\", \"within-organization\""
+												}
+											},
+											{
+												"name": "ticket_comment_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What type of comments the agent can make. Allowed values: \"public\", \"none\""
+												}
+											},
+											{
+												"name": "ticket_deletion",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can delete tickets"
+												}
+											},
+											{
+												"name": "ticket_editing",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can edit ticket properties"
+												}
+											},
+											{
+												"name": "ticket_merge",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can merge tickets"
+												}
+											},
+											{
+												"name": "ticket_redaction",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can redact content from tickets. Only applicable to tickets permitted by ticket_access"
+												}
+											},
+											{
+												"name": "ticket_tag_editing",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can edit ticket tags"
+												}
+											},
+											{
+												"name": "twitter_search_access",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can access X (formerly Twitter) searches"
+												}
+											},
+											{
+												"name": "update_user_own_alias",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can update their own alias"
+												}
+											},
+											{
+												"name": "update_user_own_name",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can update their own name"
+												}
+											},
+											{
+												"name": "update_user_own_signature",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can update their own signature"
+												}
+											},
+											{
+												"name": "use_conversational_assistance",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can use Admin Copilot conversational assistance"
+												}
+											},
+											{
+												"name": "user_view_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What the agent can do with customer lists. Allowed values: \"full\", \"manage-group\", \"manage-personal\", \"none\", \"readonly\""
+												}
+											},
+											{
+												"name": "view_access",
+												"string": {
+													"computed_optional_required": "computed_optional",
+													"description": "What the agent can do with views. Allowed values: \"full\", \"manage-group\", \"manage-personal\", \"playonly\", \"readonly\""
+												}
+											},
+											{
+												"name": "view_access_logs",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can view access logs"
+												}
+											},
+											{
+												"name": "view_audit_logs",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can view audit logs"
+												}
+											},
+											{
+												"name": "view_deleted_tickets",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can view deleted tickets"
+												}
+											},
+											{
+												"name": "view_filter_tickets",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can view and apply filters to tickets"
+												}
+											},
+											{
+												"name": "view_reduced_count",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can view reduced counts"
+												}
+											},
+											{
+												"name": "voice_access",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can answer and place calls to end users"
+												}
+											},
+											{
+												"name": "voice_dashboard_access",
+												"bool": {
+													"computed_optional_required": "computed_optional",
+													"description": "Whether or not the agent can view details about calls on the Talk dashboard"
+												}
+											}
+										],
+										"description": "Configuration settings for the role. See [Configuration](#configuration)"
+									}
+								},
+								{
+									"name": "description",
+									"string": {
+										"computed_optional_required": "computed_optional",
+										"description": "A description of the role"
+									}
+								},
+								{
+									"name": "name",
+									"string": {
+										"computed_optional_required": "required",
+										"description": "Name of the custom role"
+									}
+								},
+								{
+									"name": "created_at",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The time the record was created"
+									}
+								},
+								{
+									"name": "id",
+									"int64": {
+										"computed_optional_required": "computed",
+										"description": "Automatically assigned on creation"
+									}
+								},
+								{
+									"name": "role_type",
+									"int64": {
+										"computed_optional_required": "computed",
+										"description": "The user's role. 0 stands for a custom agent, 1 for a light agent, 2 for a chat agent, 3 for a contributor, 4 for an admin and 5 for a billing admin. See [Understanding standard agent roles in Zendesk Support](https://support.zendesk.com/hc/en-us/articles/4409155971354-Understanding-standard-agent-roles-in-Zendesk-Support) in Zendesk help"
+									}
+								},
+								{
+									"name": "team_member_count",
+									"int64": {
+										"computed_optional_required": "computed",
+										"description": "The number of team members assigned to this role"
+									}
+								},
+								{
+									"name": "updated_at",
+									"string": {
+										"computed_optional_required": "computed",
+										"description": "The time the record was last updated"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "custom_role_id",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "The ID of the custom agent role"
+						}
+					}
+				]
+			}
+		}
+	],
+	"version": "0.1"
+}

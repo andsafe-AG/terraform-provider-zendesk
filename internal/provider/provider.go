@@ -211,6 +211,7 @@ func (p *zendeskProvider) Resources(ctx context.Context) []func() resource.Resou
 	return []func() resource.Resource{
 		NewCustomStatusResource,
 		NewWebhookResource,
+		NewCustomRoleResource,
 	}
 }
 

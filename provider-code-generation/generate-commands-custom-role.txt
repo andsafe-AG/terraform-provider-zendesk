@@ -1,0 +1,19 @@
+0. Update the Zendesk Support API client (run in ../zendesk_api)
+The OpenAPI specification is taken from https://developer.zendesk.com/zendesk/oas.yaml and needs the following fixes before oapi-codegen accepts it:
+- request bodies (CustomRoleRequest) for CreateCustomRole and UpdateCustomRoleById, missing configuration attributes taken from the API reference
+- `type: "null"` in oneOf (OpenAPI 3.1 syntax) replaced by `nullable: true`
+- oneOf path parameters (organization_field_id, user_field_id, view_id) changed to `type: string`
+- `x-go-name: Roles` for the `role[]` query parameter, named schemas for the oneOf branches of DualPaginationPage
+Copy the fixed specification to mock/config/zendesk-support-api.yaml as well.
+go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config config.yaml zendesk-support-api-openapi.yaml
+
+1. Generate Provider Specifications
+tfplugingen-openapi generate --config gen-config-custom-role.yml --output output/custom_role_provider_code_spec.json ../zendesk_api/zendesk-support-api-openapi.yaml
+
+Afterwards adjust output/custom_role_provider_code_spec.json:
+- custom_role and custom_role.name are required
+- read-only configuration attributes (chat_access, group_access, light_agent, moderate_forums, organization_notes_editing) are computed
+- description of custom_role_id
+
+2. Generate Provider Code (run in the repository root)
+tfplugingen-framework generate resources --input provider-code-generation/output/custom_role_provider_code_spec.json --output internal

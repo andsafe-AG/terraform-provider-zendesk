@@ -8,6 +8,7 @@
 
 This Terraform Provider is developed on terraform Plugin Framework and integrates existing Zendesk Terraform provider with [Terraform Provider Zendesk by Nukosuke ](https://registry.terraform.io/providers/nukosuke/zendesk/latest/docs)
 
+14.10.2026 - Custom Role Support
 28.06.2024 - Combined existing provider with [Terraform Provider Zendesk by Nukosuke (GitHub)](https://github.com/nukosuke/terraform-provider-zendesk)
 27.06.2024 - Custom Ticket Status Support
 
