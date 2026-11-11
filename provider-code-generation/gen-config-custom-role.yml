@@ -1,0 +1,16 @@
+provider:
+  name: zendesk
+resources:
+  custom_role:
+    create:
+      path: /api/v2/custom_roles
+      method: POST
+    read:
+      path: /api/v2/custom_roles/{custom_role_id}
+      method: GET
+    update:
+      path: /api/v2/custom_roles/{custom_role_id}
+      method: PUT
+    delete:
+      path: /api/v2/custom_roles/{custom_role_id}
+      method: DELETE

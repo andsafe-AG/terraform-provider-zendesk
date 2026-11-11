@@ -36,3 +36,47 @@ resources:
     response:
       file: agent_label_two_response.json
       statusCode: 200
+  - path: "/api/v2/custom_roles"
+    method: GET
+    response:
+      file: custom_roles_list_response.json
+      template: true
+      statusCode: 200
+  - path: "/api/v2/custom_roles"
+    method: POST
+    capture:
+      name:
+        store: customrole
+        requestBody:
+          jsonPath: $.custom_role.name
+    response:
+      file: custom_role_response.json
+      template: true
+      statusCode: 200
+  - path: "/api/v2/custom_roles/{custom_role_id}"
+    method: GET
+    pathParams:
+      custom_role_id: 10127
+    response:
+      file: custom_role_response.json
+      template: true
+      statusCode: 200
+  - path: "/api/v2/custom_roles/{custom_role_id}"
+    method: PUT
+    pathParams:
+      custom_role_id: 10127
+    capture:
+      name:
+        store: customrole
+        requestBody:
+          jsonPath: $.custom_role.name
+    response:
+      file: custom_role_response.json
+      template: true
+      statusCode: 200
+  - path: "/api/v2/custom_roles/{custom_role_id}"
+    method: DELETE
+    pathParams:
+      custom_role_id: 10127
+    response:
+      statusCode: 204

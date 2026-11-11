@@ -60,7 +60,7 @@ func (r *customStatusResource) ImportState(ctx context.Context, request resource
 		tflog.Debug(ctx, "Found custom statuses: "+fmt.Sprintf("%v", customStatuses))
 		for _, customStatus := range *customStatuses {
 			if customStatus.AgentLabel == id {
-				idInt = int64(*customStatus.Id)
+				idInt = *customStatus.Id
 				break
 			}
 
@@ -172,7 +172,7 @@ func (r *customStatusResource) Create(ctx context.Context, req resource.CreateRe
 
 	tflog.Debug(ctx, "API response body: "+structToString(*customStatusResponse.CustomStatus))
 
-	plan.CustomStatusId = types.Int64Value(int64(*customStatusResponse.CustomStatus.Id))
+	plan.CustomStatusId = types.Int64Value(*customStatusResponse.CustomStatus.Id)
 
 	mapCustomStatusFromResponseIntoPlan(customStatusResponse.CustomStatus, &plan)
 
@@ -197,7 +197,7 @@ func structToString(obj any) string {
 }
 
 func mapCustomStatusFromResponseIntoPlan(customStatus *zendesk_api.CustomStatusObject, model *resource_custom_status.CustomStatusModel) {
-	model.CustomStatus.Id = types.Int64Value(int64(*customStatus.Id))
+	model.CustomStatus.Id = types.Int64Value(*customStatus.Id)
 	model.CustomStatus.Active = types.BoolValue(*customStatus.Active)
 	model.CustomStatus.AgentLabel = types.StringValue(customStatus.AgentLabel)
 	model.CustomStatus.StatusCategory = types.StringValue(string(customStatus.StatusCategory))
@@ -226,14 +226,14 @@ func mapPlanToCustomStatusCreateRequestPayload(customStatusModel resource_custom
 	}
 	input := zendesk_api.CustomStatusCreateInput{
 		Active:             &active,
-		AgentLabel:         customStatusModel.CustomStatus.AgentLabel.ValueStringPointer(),
-		StatusCategory:     &category,
+		AgentLabel:         customStatusModel.CustomStatus.AgentLabel.ValueString(),
+		StatusCategory:     category,
 		Description:        customStatusModel.CustomStatus.Description.ValueStringPointer(),
 		EndUserDescription: customStatusModel.CustomStatus.EndUserDescription.ValueStringPointer(),
-		EndUserLabel:       customStatusModel.CustomStatus.EndUserLabel.ValueStringPointer(),
+		EndUserLabel:       customStatusModel.CustomStatus.EndUserLabel.ValueString(),
 	}
 	payload := zendesk_api.CustomStatusCreateRequest{
-		CustomStatus: &input,
+		CustomStatus: input,
 	}
 	return payload, nil
 }
@@ -329,7 +329,7 @@ func mapCustomStatusId(ctx context.Context, state resource_custom_status.CustomS
 		tflog.Error(ctx, "Error converting CustomStatusId to int64", map[string]any{"error": diags.Errors()})
 		return 0, diags
 	}
-	var statusId = int(intVal.ValueInt64())
+	var statusId = intVal.ValueInt64()
 	return statusId, nil
 }
 
@@ -411,7 +411,7 @@ func (r *customStatusResource) Update(ctx context.Context, req resource.UpdateRe
 	customStatusResponse := customStatusUpdateResponse.JSON200
 	tflog.Debug(ctx, "API response body: "+structToString(*customStatusResponse.CustomStatus))
 
-	plan.CustomStatusId = types.Int64Value(int64(*customStatusResponse.CustomStatus.Id))
+	plan.CustomStatusId = types.Int64Value(*customStatusResponse.CustomStatus.Id)
 
 	mapCustomStatusFromResponseIntoPlan(customStatusResponse.CustomStatus, &plan)
 
